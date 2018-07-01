@@ -1,0 +1,28 @@
+@import 'styles/variable.scss';
+
+.tabs {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: $color-tabs-background;
+  color: $color-tabs;
+  .tabs-item {
+    width: 100%;
+    text-align: center;
+    flex: 1;
+    line-height: 3;
+  }
+  .slider {
+    position: absolute;
+    height: 2px;
+    background: #159;
+    bottom: 0;
+    left: 0;
+    transform: translateX(100%);
+    transition: .2s all;
+  }
+}

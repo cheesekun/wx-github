@@ -1,0 +1,69 @@
+@import 'styles/variable.scss';
+@import 'styles/fonts.scss';
+@import 'styles/mixin.scss';
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  background: $color-theme;
+  color: #fff;
+  display: flex;
+  height: 100px;
+  padding: 10px;
+  width: 100%;
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+  .top-r {
+    font-size: 14px;
+    flex: 1;
+    .login {
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 2;
+    }
+  }
+}
+
+.list {
+  padding: 5px 8px 0;
+  height: 385px;
+  .info-p {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    font-size: 16px;
+    line-height: 2;
+    color: $color-font;
+    @include bg-shadow();
+    .name {
+      font-size: 18px;
+    }
+    .icon {
+      padding-right: 15px
+    }
+    .info-b {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      line-height: 1.5;
+      padding: 15px 0;
+      font-size: 14px;
+      .b-num {
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.repo-item {
+  // box-shadow: 0 2px 2px #888;
+  @include bg-shadow();
+  margin-bottom: 5px;
+}

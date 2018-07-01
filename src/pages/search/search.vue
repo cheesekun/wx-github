@@ -1,0 +1,159 @@
+<template>
+  <div class="wrap">
+    <div class="search-box">
+      <input @confirm="search" class="search-input" type="text" placeholder="Search...">
+    </div>
+    <!-- <div class="tabs" :style="{position: position, top: topLen}"> -->
+    <div v-if="repos.length" class="tabs">
+      <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
+    </div>
+    <swiper class="list" @change="pageChange" :current-item-id="currentId" duration="200">
+      <swiper-item item-id="repos">
+        <scroll-view
+        class="list-view"
+        enable-back-to-top="true"
+        scroll-y="true"
+        @scrolltolower="scrollToLower('repos')"
+        @scroll="scroll">
+          <div class="repo-item" v-for="(item, index) in repos" :key="index">
+            <repo-item :repo="item"></repo-item>
+          </div>
+        </scroll-view>
+      </swiper-item>
+      <swiper-item item-id="users">
+        <scroll-view
+        class="list-view"
+        enable-back-to-top="true"
+        scroll-y="true"
+        @scrolltolower="scrollToLower('users')"
+        @scroll="scroll">
+          <div @click="toInfo(item.login)" class="user-item" v-for="(item, index) in users" :key="index">
+            <img class="user-avatar" :src="item['avatar_url']" alt="avatar">
+            <p class="user-name">{{item['login']}}</p>
+          </div>
+        </scroll-view>
+      </swiper-item>
+    </swiper>
+  </div>
+</template>
+
+<script>
+  /**
+   * FIXME: 微信setData限制，滚动列表数据过多就展示失败的bug
+   * FIXME: tabs组件不会随着swiper滑动而切换
+   */
+  import api from '@/utils/api'
+  import Tabs from '@/components/tabs/tabs'
+  import RepoItem from '@/components/repoItem/repoItem'
+  import { _query, dealRepos, dealUsers } from '@/utils/index.js'
+
+  /**
+   * 由于 微信 setData 数据量限制，不能一直累加
+   * 所以弄个全局的存放，而不放在 this.data里
+   */
+  // const [repos, users] = [[], []]
+
+  let q = ''
+
+  export default {
+    components: {
+      Tabs,
+      RepoItem
+    },
+    data () {
+      return {
+        tabs: [{
+          id: 'repos',
+          name: 'REPOSITORIES'
+        }, {
+          id: 'users',
+          name: 'USERS'
+        }],
+        users: [],
+        usersQuery: {
+          page: 1
+        },
+        repos: [],
+        reposQuery: {
+          page: 1
+        },
+        topLen: '0',
+        position: 'static',
+        currentId: 'repos',
+        currentIndex: 0
+      }
+    },
+    methods: {
+      async getRepos () {
+        this.reposQuery.page += 1
+        let query = _query(this.reposQuery, {q})
+        let data = await api.getRepos(query)
+        let repos = dealRepos(data.items)
+        this.repos.push(...repos)
+      },
+      async getUsers () {
+        this.usersQuery.page += 1
+        let query = _query(this.usersQuery, {q})
+        let data = await api.getUsers(query)
+        let users = dealUsers(data.items)
+        this.users.push(...users)
+      },
+      search (e) {
+        // 重置page
+        this.reposQuery.page = this.usersQuery.page = 1
+        q = e.mp.detail.value
+
+        let reposQuery = _query(this.reposQuery, {q})
+        let usersQuery = _query(this.usersQuery, {q})
+
+        let getRepos = api.getRepos(reposQuery)
+        let getUsers = api.getUsers(usersQuery)
+
+        Promise.all([getRepos, getUsers]).then(datas => {
+          let repos = dealRepos(datas[0].items)
+          let users = dealUsers(datas[1].items)
+
+          this.repos = repos
+          this.users = users
+          // this.repos.push(...repos)
+          // this.users.push(...users)
+        })
+      },
+      getTab (data) {
+        this.currentId = data.id
+      },
+      scrollToLower () {
+        if (this.currentId === 'repos') {
+          this.getRepos()
+        } else {
+          this.getUsers()
+        }
+      },
+      scroll (e) {
+        // console.log(e.mp.detail.scrollTop)
+        // // 80 是 40 转 rpx
+        // if (e.mp.detail.scrollTop > 80) {
+        //   this.position = 'fixed'
+        //   this.topLen = '0'
+        // } else {
+        //   this.position = 'static'
+        //   this.topLen = '40px'
+        // }
+      },
+      pageChange (e) {
+        this.currentId = e.mp.detail.currentItemId
+        this.currentIndex = e.mp.detail.current
+      },
+      toInfo (user) {
+        wx.navigateTo({
+          url: `/pages/info/info?login=${user}`
+        })
+      }
+
+    }
+  }
+</script>
+
+<style scoped lang="scss">
+  @import './search.scss';
+</style>

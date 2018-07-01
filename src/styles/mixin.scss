@@ -1,0 +1,5 @@
+// 背景阴影块
+@mixin bg-shadow() {
+  box-shadow: 0 2px 2px #888;
+  background: #fff;
+}

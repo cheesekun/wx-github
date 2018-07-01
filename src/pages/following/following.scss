@@ -1,0 +1,17 @@
+.following-container {
+
+  .user-item {
+    display: flex;
+    padding: 8px;
+    font-size: 16px;
+    line-height: 1.5;
+    box-shadow: 0 2px 2px #888;
+    margin: 0 8px 10px;
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+    }
+  }
+}

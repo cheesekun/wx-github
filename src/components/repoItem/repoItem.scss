@@ -1,0 +1,44 @@
+@import 'styles/fonts.scss';
+
+.repo-item {
+  display: flex;
+  padding: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+
+  .repo-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    flex: 1;
+    .top {
+      display: flex;
+      justify-content: space-between;
+      .repo-lang {
+        font-size: 14px
+      }
+    }
+    .repo-desc {
+      font-size: 15px;
+      padding-bottom: 5px;
+    }
+    .bottom {
+      display: flex;
+      width: 240px;
+      justify-content: space-between;
+      font-size: 13px;
+      p {
+        width: 80px;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}
