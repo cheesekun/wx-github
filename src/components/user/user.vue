@@ -1,6 +1,6 @@
 <template>
   <div class="info-container">
-    <div class="top" :style="{backgroundImage: 'url(' + info['avatar_url'] + ')'}">
+    <div id="top" class="top" :style="{backgroundImage: 'url(' + info['avatar_url'] + ')'}">
       <div class="bg-wrapper"></div>
       <div class="content">
         <img class="avatar" :src="info['avatar_url']" alt="avatar">
@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <div class="tabs">
+    <div id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
     <swiper @change="pageChange" :style="{height: height}" class="list" :current-item-id="currentId" duration="200">
@@ -129,10 +129,19 @@ export default {
   created () {
     wx.getSystemInfo({
       success: (res) => {
-        // console.log(res)
-        this.height = res.windowHeight - 100 - 62 + 8 + 'px'
-        console.log(this.height)
+        this.height = res.windowHeight
       }
+    })
+
+    let query = wx.createSelectorQuery()
+    // 选择id
+    query.select('#top').boundingClientRect()
+    query.select('#tabs').boundingClientRect()
+    query.exec(res => {
+      let topH = res[0].height
+      let tabsH = res[1].height
+
+      this.height = this.height - topH - tabsH + 'px'
     })
   },
   // onload () {
