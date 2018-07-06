@@ -4,7 +4,7 @@ module.exports = [
     name: 'trending',
     config: {
       enablePullDownRefresh: true,
-      navigationBarTitleText: '热榜Trending'
+      navigationBarTitleText: 'Trending'
     }
   },
   {
@@ -12,7 +12,7 @@ module.exports = [
     name: 'search',
     config: {
       enablePullDownRefresh: true,
-      navigationBarTitleText: '查询Search'
+      navigationBarTitleText: 'Search'
     }
   },
   {
@@ -45,6 +45,14 @@ module.exports = [
     config: {
       enablePullDownRefresh: true,
       navigationBarTitleText: 'Following'
+    }
+  },
+  {
+    path: '/pages/repo/repo',
+    name: 'repo',
+    config: {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: 'Repository'
     }
   }
 ]
