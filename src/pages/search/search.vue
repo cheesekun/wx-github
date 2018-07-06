@@ -27,9 +27,8 @@
         scroll-y="true"
         @scrolltolower="scrollToLower('users')"
         @scroll="scroll">
-          <div @click="toInfo(item.login)" class="user-item" v-for="(item, index) in users" :key="index">
-            <img class="user-avatar" :src="item['avatar_url']" alt="avatar">
-            <p class="user-name">{{item['login']}}</p>
+          <div v-for="(item, index) in users" :key="index">
+            <user-item :item="item" />
           </div>
         </scroll-view>
       </swiper-item>
@@ -45,6 +44,7 @@
   import api from '@/utils/api'
   import Tabs from '@/components/tabs/tabs'
   import RepoItem from '@/components/repoItem/repoItem'
+  import UserItem from '@/components/userItem/userItem'
   import { _query, dealRepos, dealUsers } from '@/utils/index.js'
 
   /**
@@ -58,7 +58,8 @@
   export default {
     components: {
       Tabs,
-      RepoItem
+      RepoItem,
+      UserItem
     },
     data () {
       return {
@@ -143,11 +144,6 @@
       pageChange (e) {
         this.currentId = e.mp.detail.currentItemId
         this.currentIndex = e.mp.detail.current
-      },
-      toInfo (user) {
-        wx.navigateTo({
-          url: `/pages/info/info?login=${user}`
-        })
       }
 
     }

@@ -3,3 +3,10 @@
   box-shadow: 0 2px 2px #888;
   background: #fff;
 }
+
+// 省略号
+@mixin text-over() {
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
