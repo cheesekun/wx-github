@@ -1,100 +1,66 @@
 <template>
-  <div class="container" @click="clickHandle('test click', $event)">
-    <button @click="apiTest">发个请求试试</button>
-    <div class="userinfo" @click="bindViewTap">
-      <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
-      <div class="userinfo-nickname">
-        <card :text="userInfo.nickName"></card>
+  <div class="trending-container">
+    <div class="picker">
+      <div class="bg"></div>
+      <div class="picker-item">
+        <picker @change="pickerChange" :value="index" :range="langs">
+          <div class="picker-item">
+            {{langs[index]}} <span class="icon-move-down"></span>
+          </div>
+        </picker>
       </div>
     </div>
-
-    <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form>
-    <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a>
+    <div id="tabs" class="tabs">
+      <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
+    </div>
   </div>
 </template>
 
 <script>
-import wx from 'wx'
-import api from '@/utils/api'
+/**
+ * FIXME: 那个高1px是什么玩意
+*/
+// import wx from 'wx'
+// import api from '@/utils/api'
+import Tabs from '@/components/tabs/tabs'
 
 export default {
+  created () {
+
+  },
   data () {
     return {
-      motto: 'Hello World',
-      userInfo: {}
+      langs: ['All Language', 'JavaScript', 'PHP', 'Node', 'Java', 'C++', 'C', 'Python', 'Go'],
+      index: 0,
+      tabs: [{
+        id: 'daily',
+        name: 'DAYLY'
+      }, {
+        id: 'weekly',
+        name: 'WEEKLY'
+      }, {
+        id: 'monthly',
+        name: 'MONTHLY'
+      }],
+      currentIndex: 1
     }
   },
-
+  components: {
+    Tabs
+  },
   methods: {
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
+    pickerChange (e) {
+      this.index = e.mp.detail.value
+      console.log(e.mp.detail.value)
     },
-    getUserInfo () {
-      // 调用登录接口
-      wx.login({
-        success: () => {
-          wx.getUserInfo({
-            success: (res) => {
-              this.userInfo = res.userInfo
-            }
-          })
-        }
-      })
-    },
-    clickHandle (msg, ev) {
-      console.log('clickHandle:', msg, ev)
-    },
-    async apiTest () {
-      let data = await api.apiTest()
+    getTab (data) {
+      // this.currentId = data.id
       console.log(data)
     }
-  },
-
-  created () {
-    // 调用应用实例的方法获取全局数据
-    this.getUserInfo()
   }
 }
 </script>
 
-<style scoped>
-.userinfo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.userinfo-avatar {
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
-}
-
-.userinfo-nickname {
-  color: #aaa;
-}
-
-.usermotto {
-  margin-top: 150px;
-}
-
-.form-control {
-  display: block;
-  padding: 0 12px;
-  margin-bottom: 5px;
-  border: 1px solid #ccc;
-}
-
-.counter {
-  display: inline-block;
-  margin: 10px auto;
-  padding: 5px 10px;
-  color: blue;
-  border: 1px solid blue;
-}
+<style scoped lang="scss">
+ @import './trending.scss';
 </style>
