@@ -10,7 +10,8 @@
   display: flex;
   height: 40px;
   align-items: center;
-  margin: 4px 0;
+  box-sizing: border-box;
+  padding: 4px 0;
 
   .search-input {
     width: 100%;
@@ -38,20 +39,13 @@
 }
 
 .tabs {
-  // position: static;
-  // top: 40px;
-  // left: 0;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  transition: .5s all;
-  z-index: 10;
+  height: 55px;
 }
 
 .list {
   flex: 1;
-  margin-top: 3px;
-  height: 580px;
+  box-sizing: border-box;
+  padding-top: 3px;
   .list-view {
     height: 100%;
   }
@@ -76,10 +70,6 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-  }
-
-  .user-name {
-
   }
 
 }

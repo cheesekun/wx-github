@@ -1,16 +1,16 @@
 <template>
   <div class="wrap">
-    <div class="search-box">
+    <div id="search" class="search-box">
       <input @confirm="search" class="search-input" type="text" placeholder="Search...">
     </div>
-    <!-- <div class="tabs" :style="{position: position, top: topLen}"> -->
-    <div v-if="repos.length" class="tabs">
+    <div id="tabs" v-if="repos.length" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
-    <swiper class="list" @change="pageChange" :current-item-id="currentId" duration="200">
+    <swiper class="list" :style="{height: height + 'px'}" @change="pageChange" :current-item-id="currentId" duration="200">
       <swiper-item item-id="repos">
         <scroll-view
         class="list-view"
+        :style="{height: height + 'px'}"
         enable-back-to-top="true"
         scroll-y="true"
         @scrolltolower="scrollToLower('repos')"
@@ -18,17 +18,24 @@
           <div class="repo-item" v-for="(item, index) in repos" :key="index">
             <repo-item :repo="item"></repo-item>
           </div>
+          <div v-show="reposLoading">
+            <Loading />
+          </div>
         </scroll-view>
       </swiper-item>
       <swiper-item item-id="users">
         <scroll-view
         class="list-view"
+        :style="{height: height + 'px'}"
         enable-back-to-top="true"
         scroll-y="true"
         @scrolltolower="scrollToLower('users')"
         @scroll="scroll">
           <div v-for="(item, index) in users" :key="index">
             <user-item :item="item" />
+          </div>
+          <div v-show="usersLoading">
+            <Loading />
           </div>
         </scroll-view>
       </swiper-item>
@@ -37,15 +44,14 @@
 </template>
 
 <script>
-  /**
-   * FIXME: 微信setData限制，滚动列表数据过多就展示失败的bug
-   * FIXME: tabs组件不会随着swiper滑动而切换
-   */
   import api from '@/utils/api'
   import Tabs from '@/components/tabs/tabs'
   import RepoItem from '@/components/repoItem/repoItem'
   import UserItem from '@/components/userItem/userItem'
+  import Loading from '@/components/loading/loading'
   import { _query, dealRepos, dealUsers } from '@/utils/index.js'
+  import { mapState } from 'vuex'
+  // import wx from 'wx'
 
   /**
    * 由于 微信 setData 数据量限制，不能一直累加
@@ -56,10 +62,27 @@
   let q = ''
 
   export default {
+    onLoad () {
+      wx.getSystemInfo({
+        success: (res) => {
+          this.height = res.windowHeight
+        }
+      })
+
+      let query = wx.createSelectorQuery()
+      // 选择id
+      query.select('#search').boundingClientRect()
+
+      query.exec(res => {
+        let searchH = res[0].height
+        this.height = this.height - searchH - this.tabsH
+      })
+    },
     components: {
       Tabs,
       RepoItem,
-      UserItem
+      UserItem,
+      Loading
     },
     data () {
       return {
@@ -81,8 +104,16 @@
         topLen: '0',
         position: 'static',
         currentId: 'repos',
-        currentIndex: 0
+        currentIndex: 0,
+        height: '',
+        reposLoading: false,
+        usersLoading: false
       }
+    },
+    computed: {
+      ...mapState([
+        'tabsH'
+      ])
     },
     methods: {
       async getRepos () {
@@ -91,6 +122,7 @@
         let data = await api.getRepos(query)
         let repos = dealRepos(data.items)
         this.repos.push(...repos)
+        this.reposLoading = false
       },
       async getUsers () {
         this.usersQuery.page += 1
@@ -98,6 +130,7 @@
         let data = await api.getUsers(query)
         let users = dealUsers(data.items)
         this.users.push(...users)
+        this.usersLoading = false
       },
       search (e) {
         // 重置page
@@ -125,8 +158,10 @@
       },
       scrollToLower () {
         if (this.currentId === 'repos') {
+          this.reposLoading = this.repos.length
           this.getRepos()
         } else {
+          this.usersLoading = this.users.length
           this.getUsers()
         }
       },
