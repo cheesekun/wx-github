@@ -3,7 +3,7 @@ module.exports = [
     path: '/pages/trending/trending',
     name: 'trending',
     config: {
-      enablePullDownRefresh: true,
+      enablePullDownRefresh: false,
       navigationBarTitleText: 'Trending'
     }
   },
@@ -11,7 +11,7 @@ module.exports = [
     path: '/pages/search/search',
     name: 'search',
     config: {
-      enablePullDownRefresh: true,
+      enablePullDownRefresh: false,
       navigationBarTitleText: 'Search'
     }
   },
@@ -19,7 +19,7 @@ module.exports = [
     path: '/pages/me/me',
     name: 'me',
     config: {
-      enablePullDownRefresh: true,
+      enablePullDownRefresh: false,
       navigationBarTitleText: 'Me'
     }
   },
@@ -27,7 +27,7 @@ module.exports = [
     path: '/pages/info/info',
     name: 'info',
     config: {
-      enablePullDownRefresh: true,
+      enablePullDownRefresh: false,
       navigationBarTitleText: 'Info'
     }
   },
@@ -51,8 +51,15 @@ module.exports = [
     path: '/pages/repo/repo',
     name: 'repo',
     config: {
-      enablePullDownRefresh: true,
+      enablePullDownRefresh: false,
       navigationBarTitleText: 'Repository'
+    }
+  }, {
+    path: '/pages/about/about',
+    name: 'about',
+    config: {
+      enablePullDownRefresh: false,
+      navigationBarTitleText: 'About'
     }
   }
 ]

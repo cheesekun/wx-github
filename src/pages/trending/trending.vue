@@ -23,10 +23,27 @@
 // import wx from 'wx'
 // import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
+import { mapMutations } from 'vuex'
 
 export default {
-  created () {
-
+  onLoad () {
+    // wx.getSystemInfo({
+    //   success: (res) => {
+    //     this.height = res.windowHeight
+    //   }
+    // })
+    let query = wx.createSelectorQuery()
+    // // 选择id
+    // query.select('#search').boundingClientRect()
+    query.select('#tabs').boundingClientRect()
+    query.exec(res => {
+      // let searchH = res[0].heihgt
+      let tabsH = res[0].height
+      // this.height = this.height - searchH - tabsH
+      // console.log(res)
+      console.log(tabsH)
+      this.assignTabsH(tabsH)
+    })
   },
   data () {
     return {
@@ -56,7 +73,10 @@ export default {
     getTab (data) {
       // this.currentId = data.id
       console.log(data)
-    }
+    },
+    ...mapMutations([
+      'assignTabsH'
+    ])
   }
 }
 </script>
