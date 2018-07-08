@@ -1,5 +1,6 @@
 /* eslint-disable */
 import {per_page} from '@/utils/config'
+import colors from './colors'
 
 export function formatNumber (n) {
   const str = n.toString()
@@ -60,7 +61,8 @@ export function dealRepos (data) {
       language: item.language,
       description: item.description,
       stargazers_count: item['stargazers_count'],
-      forks_count: item['forks_count']
+      forks_count: item['forks_count'],
+      color: colors[item.language]
     }
   })
   return repos
