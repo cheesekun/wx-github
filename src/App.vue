@@ -12,7 +12,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
+@import 'styles/fonts.scss';
 .container {
   height: 100%;
   display: flex;
