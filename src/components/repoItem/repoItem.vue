@@ -4,7 +4,7 @@
     <div class="info">
       <div class="top">
         <p class="repo-name">{{repo.name}}</p>
-        <p class="repo-lang" v-if="repo.language">{{repo.language}}<span class="lang-color" :style="{background: colors[repo.language]}"></span></p>
+        <p class="repo-lang" v-if="repo.language">{{repo.language}}<span class="lang-color" :style="{background: repo.color}"></span></p>
       </div>
       <p class="repo-desc">{{repo.description}}</p>
       <div class="bottom">
@@ -17,12 +17,7 @@
 </template>
 
 <script>
-  import colors from '@/utils/colors'
-
   export default {
-    created () {
-      this.colors = colors
-    },
     props: {
       repo: {
         types: Object,
@@ -30,9 +25,7 @@
       }
     },
     data () {
-      return {
-        colors: {}
-      }
+      return {}
     },
     methods: {
       toInfo (user) {

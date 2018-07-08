@@ -1,4 +1,3 @@
-@import 'styles/fonts.scss';
 @import 'styles/variable.scss';
 @import 'styles/mixin.scss';
 
@@ -32,6 +31,7 @@
       }
       .repo-lang {
         color: $color-font-grey;
+        @include text-over();
         .lang-color {
           display: inline-block;
           margin: 0 2px;
