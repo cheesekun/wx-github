@@ -12,8 +12,11 @@
   },
   "dependencies": {
     "flyio": "^0.5.9",
+    "js-base64": "^2.4.6",
+    "marked": "^0.4.0",
     "moment": "^2.22.2",
     "mpvue": "^1.0.0",
+    "mpvue-wxparse": "^0.6.5",
     "vuex": "^3.0.0"
   },
   "devDependencies": {
