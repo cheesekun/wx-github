@@ -35,7 +35,7 @@
       },
       toRepo (user, repo) {
         wx.navigateTo({
-          url: `/pages/repo/repo?user=${user}&repo=${repo}`
+          url: `/pages/repo/repo?owner=${user}&repo=${repo}`
         })
       }
     }
