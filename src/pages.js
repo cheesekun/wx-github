@@ -48,18 +48,18 @@ module.exports = [
     }
   },
   {
-    path: '/pages/repo/repo',
-    name: 'repo',
-    config: {
-      enablePullDownRefresh: false,
-      navigationBarTitleText: 'Repository'
-    }
-  }, {
     path: '/pages/about/about',
     name: 'about',
     config: {
       enablePullDownRefresh: false,
       navigationBarTitleText: 'About'
+    }
+  }, {
+    path: '/pages/repo/repo',
+    name: 'repo',
+    config: {
+      enablePullDownRefresh: false,
+      navigationBarTitleText: 'Repository'
     }
   }
 ]
