@@ -3,4 +3,4 @@
 /**
  * 默认请求个数
  */
-export const per_page = 15
+export const per_page = 10
