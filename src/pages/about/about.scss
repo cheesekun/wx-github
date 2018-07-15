@@ -1,0 +1,65 @@
+@import 'styles/variable.scss';
+@import 'styles/mixin.scss';
+
+.about-container {
+  display: flex;
+  flex-direction: column;
+  .block-bg {
+    width: 100%;
+    @include bg-shadow();
+    margin: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item {
+    display: flex;
+    height: 60px;
+    align-items: center;
+    i {
+      transform: scale(1.2);
+      padding-right: 20px;
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+
+      .title {
+
+      }
+      .desc {
+        font-size: 14px;
+        color: $color-font-grey;
+      }
+    }
+  }
+
+  .hub {
+    width: 100px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+  }
+
+  .code {
+
+  }
+
+  .author {
+
+  }
+
+  .todo {
+
+  }
+
+}
+

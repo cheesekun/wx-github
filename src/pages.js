@@ -61,5 +61,12 @@ module.exports = [
       enablePullDownRefresh: false,
       navigationBarTitleText: 'Repository'
     }
+  }, {
+    path: '/pages/repos/repos',
+    name: 'repos',
+    config: {
+      enablePullDownRefresh: false,
+      navigationBarTitleText: 'Repositories'
+    }
   }
 ]
