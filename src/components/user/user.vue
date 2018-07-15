@@ -19,8 +19,9 @@
         <div class="info-p">
           <p class="name">{{info.name}}</p>
           <p>{{info.bio}}</p>
-          <p><span class="icon-envelop icon"></span>{{info.email}}</p>
-          <p><span class="icon-earth icon"></span>{{info.blog}}</p>
+          <p v-if="info.company"><span class="icon-users icon"></span>{{info.company}}</p>
+          <p v-if="info.email"><span class="icon-envelop icon"></span>{{info.email}}</p>
+          <p v-if="info.blog"><span class="icon-earth icon"></span>{{info.blog}}</p>
           <div class="info-b">
             <div @click="toFollowers(info.login)">
               <p class="b-num">{{info.followers}}</p>
@@ -40,7 +41,7 @@
             </div>
           </div>
           <!-- me -->
-          <div class="about">
+          <div @click="toAbout" class="about" v-if="isMe">
             <img src="https://avatars0.githubusercontent.com/u/21058528?v=4" alt="cheesekun">
           </div>
         </div>
@@ -58,11 +59,12 @@
       </swiper-item>
       <swiper-item item-id="starred">
         <scroll-view
+        :style="{height: height}"
         enable-back-to-top="true"
         scroll-y="true"
         @scrolltolower="scrollToLower('starred')"
         @scroll="scroll"
-        :style="{height: height}">
+        >
           <div class="repo-item" v-for="(item, index) in starreds" :key="index">
             <repo-item :repo="item"></repo-item>
           </div>
@@ -74,7 +76,9 @@
 
 <script>
 /**
- * FIXME: 在离开info页面时，改变tabs的指向
+ * FIXME: 不应该通过判断starreds 来确定有没有加载star数据，因为可能本来就是空，弄个字段标识空，就不用反复请求了
+ * FIXME: 把moment的数据处理拿到utils里
+ * TODO: 添加loading/loadEnd/noData，还有初始转场的loading。
  * TODO: repos页面
  * TODO: Gist 页面
  */
@@ -86,46 +90,6 @@ import moment from 'moment'
 import wx from 'wx'
 
 export default {
-  // beforeCreate () {
-  //   console.log(1)
-  // },
-  // created () {
-  //   console.log(2)
-  // },
-  // beforeMount () {
-  //   console.log(3)
-  // },
-  // mounted () {
-  //   console.log(4)
-  // },
-  // FIXME: 有点意思
-  // beforeUpdate () {
-  //   // console.log(5)
-  //   this.starreds = []
-  //   this.events = []
-  //   this.currentId = 'info'
-  // },
-  // updated () {
-  //   console.log(6)
-  // },
-  // activated () {
-  //   console.log(7)
-  // },
-  // deactivated () {
-  //   console.log(8)
-  // },
-  // beforeDestroy () {
-  //   console.log(9)
-  // },
-  // destroyed () {
-  //   console.log(10)
-  // },
-  // mounted () {
-  //   console.log(11)
-  //   this.starreds = []
-  //   this.events = []
-  //   this.currentId = 'info'
-  // },
   created () {
     wx.getSystemInfo({
       success: (res) => {
@@ -143,28 +107,18 @@ export default {
 
       this.height = this.height - topH - tabsH + 'px'
     })
+
+    const pageRoute = this.$root.$mp.page.route
+    if (pageRoute.indexOf('/me') !== -1) {
+      this.isMe = true
+    }
   },
-  // onload () {
-  //   console.log(1)
-  //   wx.getSystemInfo({
-  //     success: (res) => {
-  //       console.log(res)
-  //     }
-  //   })
-  // },
   onHide () {
-    console.log(2)
     this.starreds = []
     this.events = []
     this.currentId = 'info'
     this.currentIndex = 0
   },
-  // onShow () {
-  //   console.log(this.info.login)
-  // },
-  // onUnload () {
-  //   console.log(4)
-  // },
   props: {
     info: {
       type: Object,
@@ -187,7 +141,8 @@ export default {
       currentIndex: 0,
       events: [],
       starreds: [],
-      height: ''
+      height: '',
+      isMe: false
     }
   },
   components: {
@@ -202,9 +157,6 @@ export default {
   methods: {
     getTab (data) {
       this.currentId = data.id
-    },
-    scrollToLower (currentId) {
-
     },
     async getEvents () {
       let user = this.info.login
@@ -228,6 +180,9 @@ export default {
         // this.getEvents()
       }
     },
+    scrollTolower (e) {
+      console.log(e)
+    },
     toFollowers (user) {
       wx.navigateTo({
         url: `/pages/followers/followers?login=${user}`
@@ -239,14 +194,9 @@ export default {
       })
     },
     toRepos (user) {
-      wx.showToast({
-        title: '施工中...',
-        icon: 'success',
-        duration: 1500
+      wx.navigateTo({
+        url: `/pages/repos/repos?login=${user}`
       })
-      // wx.navigateTo({
-      //   url: `/pages/repos/repos?login=${user}`
-      // })
     },
     toGists (user) {
       wx.showToast({
@@ -257,6 +207,11 @@ export default {
       // wx.navigateTo({
       //   url: `/pages/gists/gists?login=${user}`
       // })
+    },
+    toAbout () {
+      wx.navigateTo({
+        url: '/pages/about/about'
+      })
     }
   }
 }
