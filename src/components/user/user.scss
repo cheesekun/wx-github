@@ -1,5 +1,4 @@
 @import 'styles/variable.scss';
-@import 'styles/fonts.scss';
 @import 'styles/mixin.scss';
 
 .info-container {
@@ -90,8 +89,8 @@
 
 .repo-item {
   // box-shadow: 0 2px 2px #888;
-  @include bg-shadow();
-  margin-bottom: 5px;
+  // @include bg-shadow();
+  // margin-bottom: 5px;
 }
 
 .about {

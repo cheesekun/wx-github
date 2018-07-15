@@ -3,8 +3,10 @@
 
 .repo-item {
   display: flex;
-  padding: 14px;
+  padding: 8px;
   line-height: 2.2;
+  margin-bottom: 5px;
+  @include bg-shadow();
 
   .repo-avatar {
     min-height: 50px;
