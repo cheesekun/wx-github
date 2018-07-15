@@ -1,5 +1,4 @@
 @import 'styles/variable.scss';
-@import 'styles/fonts.scss';
 @import 'styles/mixin.scss';
 
 .repo-container {
@@ -36,6 +35,9 @@
     font-size: 14px;
     .name {
       font-size: 20px;
+    }
+    .desc {
+      @include text-over-multiple(2);
     }
   }
 

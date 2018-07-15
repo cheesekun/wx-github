@@ -4,14 +4,15 @@
       <div class="bg-wrapper"></div>
       <div class="content">
         <p class="name">{{repo.name}}</p>
-        <p>{{repo.description}}</p>
+        <p class="desc">{{repo.description}}</p>
         <p>Language {{repo.language}}，size {{size}}</p>
       </div>
     </div>
     <div id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
-    <swiper @change="pageChange" :style="{height: height}" class="list" :current-item-id="currentId" duration="200">
+    <Loading v-if="loading" />
+    <swiper v-if="!loading" @change="pageChange" :style="{height: height}" class="list" :current-item-id="currentId" duration="200">
       <swiper-item item-id="info">
         <scroll-view
         :style="{height: height}"
@@ -80,6 +81,7 @@
 <script>
 import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
+import Loading from '@/components/loading/loading'
 import { dealRepo } from '@/utils'
 
 import marked from 'marked'
@@ -107,10 +109,9 @@ export default {
       this.height = this.height - topH - tabsH + 'px'
     })
   },
-  /**
-   * TODO: readme 和 repo 信息一起获取
-   */
+
   async onShow () {
+    this.loading = true
     let query = this.$root.$mp.query
     let {owner, repo} = query
 
@@ -118,10 +119,16 @@ export default {
     let getReadme = api.getReadme(owner, repo)
 
     Promise.all([getReadme, getRepo]).then(datas => {
+      this.loading = false
       let readme = Base64.decode(datas[0].content)
       this.readme = marked(readme)
       this.repo = dealRepo(datas[1])
     })
+  },
+
+  onHide () {
+    this.repo = {}
+    this.readme = ''
   },
   data () {
     return {
@@ -139,12 +146,14 @@ export default {
       currentId: 'info',
       currentIndex: 0,
       height: '',
-      readme: ''
+      readme: '',
+      loading: false
     }
   },
   components: {
     Tabs,
-    wxParse
+    wxParse,
+    Loading
   },
   methods: {
     getTab (data) {
