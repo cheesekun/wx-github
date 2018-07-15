@@ -1,0 +1,52 @@
+@import 'styles/variable.scss';
+@import 'styles/mixin.scss';
+
+.trending-item {
+  display: flex;
+  padding: 14px;
+  line-height: 2.2;
+  flex-direction: column;
+  margin-bottom: 5px;
+  @include bg-shadow();
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    .trending-name {
+      color: $color-font-blue;
+      @include text-over();
+      font-weight: bold;
+      width: 240px;
+    }
+    .trending-lang {
+      color: $color-font-grey;
+      @include text-over();
+      .lang-color {
+        display: inline-block;
+        margin: 0 2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+    }
+  }
+  .trending-desc {
+    font-size: 14px;
+    padding-bottom: 5px;
+    line-height: 1.2;
+  }
+  .bottom {
+    display: flex;
+    width: 320px;
+    margin-top: 4px;
+    font-size: 13px;
+    color: $color-font-grey;
+    p {
+      width: 80px;
+    }
+    .increment {
+      flex: 1;
+    }
+  }
+}
