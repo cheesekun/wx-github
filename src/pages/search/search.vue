@@ -244,7 +244,7 @@
           let historys = wx.getStorageSync('historys')
           this.historys = JSON.parse(historys)
         } catch (e) {
-          wx.setStorageSync({
+          wx.setStorage({
             key: 'historys',
             data: '[]'
           })
