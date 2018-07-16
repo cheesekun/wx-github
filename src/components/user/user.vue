@@ -7,7 +7,7 @@
         <div class="top-r">
           <p class="login">{{info.login}}</p>
           <p>{{info.location}}</p>
-          <p>Joined at {{created_at}}</p>
+          <p>Joined at {{info['created_at']}}</p>
         </div>
       </div>
     </div>
@@ -79,14 +79,12 @@
  * FIXME: 不应该通过判断starreds 来确定有没有加载star数据，因为可能本来就是空，弄个字段标识空，就不用反复请求了
  * FIXME: 把moment的数据处理拿到utils里
  * TODO: 添加loading/loadEnd/noData，还有初始转场的loading。
- * TODO: repos页面
  * TODO: Gist 页面
  */
 import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
 import RepoItem from '@/components/repoItem/repoItem'
 import {dealRepos} from '@/utils/index'
-import moment from 'moment'
 import wx from 'wx'
 
 export default {
@@ -148,11 +146,6 @@ export default {
   components: {
     Tabs,
     RepoItem
-  },
-  computed: {
-    created_at () {
-      return moment(this.info['created_at']).format('LL')
-    }
   },
   methods: {
     getTab (data) {

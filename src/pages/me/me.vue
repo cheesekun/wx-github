@@ -11,8 +11,7 @@
 <script>
 import api from '@/utils/api'
 import User from '@/components/user/user'
-// import utils from '@/utils/index'
-// import Info from '@/pages/info/info'
+import { dealUser } from '@/utils'
 
 export default {
   async created () {
@@ -28,7 +27,7 @@ export default {
   },
   methods: {
     async getMe () {
-      const info = await api.getMe()
+      const info = dealUser(await api.getMe())
       return info
     }
   }

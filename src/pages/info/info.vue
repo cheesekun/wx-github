@@ -7,7 +7,7 @@
 <script>
 import api from '@/utils/api'
 import User from '@/components/user/user'
-import { getQuery } from '@/utils'
+import { getQuery, dealUser } from '@/utils'
 // import wx from 'wx'
 
 export default {
@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     async getInfo (user) {
-      const info = await api.getInfo(user)
+      const info = dealUser(await api.getInfo(user))
       return info
     }
   }
