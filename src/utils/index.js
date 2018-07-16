@@ -1,6 +1,7 @@
 /* eslint-disable */
 import {per_page} from '@/utils/config'
 import colors from './colors'
+import moment from 'moment'
 
 export function formatNumber (n) {
   const str = n.toString()
@@ -82,11 +83,84 @@ export function dealUsers (data) {
   return users
 }
 
-// export const utils =  {
-//   formatNumber,
-//   formatTime,
-//   _throttle,
-//   dealRepos,
-//   dealUsers,
-//   _query
-// }
+/**
+ * user 数据处理
+*/
+export function dealUser (data) {
+  return {
+    login: data.login,
+    avatar_url: data['avatar_url'],
+    type: data.type,
+    name: data.name,
+    company: data.company,
+    blog: data.blog,
+    email: data.email,
+    bio: data.bio,
+    public_repos: data['public_repos'],
+    public_gists: data['public_gists'],
+    followers: data.followers,
+    following: data.following,
+    created_at: moment(data['created_at']).format('LL'),
+  }
+}
+
+/**
+ * repo 数据处理
+*/
+export function dealRepo (data) {
+  let repo = {
+    name: data['name'],
+    full_name: data['full_name'],
+    owner: {
+      login: data['owner'].login,
+      avatar_url: data['owner']['avatar_url']
+    },
+    description: data['description'],
+    created_at: moment(data['created_at']).format('LL'),
+    pushed_at: moment(data['pushed_at']).format('LL'),
+    size: data['size'],
+    stargazers_count: data['stargazers_count'],
+    forks_count: data['forks_count'],
+    open_issues_count: data['open_issues_count'],
+    subscribers_count: data['subscribers_count'],
+    language: data['language'],
+  }
+  return repo
+}
+
+/**
+ * trending 数据处理
+*/
+export function dealTrending (data) {
+  let repos = []
+  repos = data.map(item => {
+    return {
+      owner: {
+        login: item.owner.login
+      },
+      name: item.name,
+      language: item.language,
+      description: item.description,
+      stargazers_count: item['stargazers_count'],
+      forks_count: item['forks_count'],
+      increment: item.increment,
+      color: colors[item.language]
+    }
+  })
+  return repos
+}
+
+/**
+ * 获取当前路径参数
+ * 不用mpvue提供的this.$root.$mp.query
+ * 因为其进入同一页面，参数不会变化
+*/
+export function getQuery () {
+  /* eslint-disable */
+  /* 获取当前路由栈数组 */
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+  const options = currentPage.options
+
+  return options
+}
