@@ -151,6 +151,28 @@ export function dealTrending (data) {
 }
 
 /**
+ * commit 数据处理
+*/
+export function dealCommit (data) {
+  let commits = []
+  commits = data.map(item => {
+    return {
+      sha: item.sha.slice(0,7),
+      author: {
+        login: item.author.login,
+        avatar_url: item.author['avatar_url']
+      },
+      commit: {
+        message: item.commit.message,
+        comment_count: item.commit['comment_count'],
+        date: item.commit.committer.date
+      }
+    }
+  })
+  return commits
+}
+
+/**
  * 获取当前路径参数
  * 不用mpvue提供的this.$root.$mp.query
  * 因为其进入同一页面，参数不会变化

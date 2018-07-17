@@ -77,7 +77,6 @@
 <script>
 /**
  * FIXME: 不应该通过判断starreds 来确定有没有加载star数据，因为可能本来就是空，弄个字段标识空，就不用反复请求了
- * FIXME: 把moment的数据处理拿到utils里
  * TODO: 添加loading/loadEnd/noData，还有初始转场的loading。
  * TODO: Gist 页面
  */
@@ -112,10 +111,20 @@ export default {
     }
   },
   onHide () {
+    console.log(11)
+  },
+  onLoad () {
+    console.log(22)
     this.starreds = []
     this.events = []
     this.currentId = 'info'
     this.currentIndex = 0
+  },
+  onUnload () {
+    // FIXME: 感觉要重构
+    // this.currentId = 'starred'
+    // this.currentIndex = 2
+    console.log(33)
   },
   props: {
     info: {
