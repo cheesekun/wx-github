@@ -118,11 +118,18 @@ export default {
     let getRepo = api.getRepo(owner, repo)
     let getReadme = api.getReadme(owner, repo)
 
+    /**
+     * FIXME: readme请求太慢了，拆开来
+    */
     Promise.all([getReadme, getRepo]).then(datas => {
       this.loading = false
-      let readme = Base64.decode(datas[0].content)
-      this.readme = marked(readme)
       this.repo = dealRepo(datas[1])
+      if (datas[0] === undefined) {
+        this.readme = '此仓库无README.'
+      } else {
+        let readme = Base64.decode(datas[0].content)
+        this.readme = marked(readme)
+      }
     })
   },
 
@@ -168,6 +175,11 @@ export default {
       wx.navigateTo({
         url: `/pages/info/info?login=${user}`
       })
+    },
+    pageChange (e) {
+      const currentItemId = e.mp.detail.currentItemId
+      this.currentId = currentItemId
+      this.currentIndex = e.mp.detail.current
     }
   },
   computed: {

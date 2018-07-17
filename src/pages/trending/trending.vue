@@ -13,9 +13,9 @@
     <div id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
-    <!-- <Loading /> -->
     <swiper @change="pageChange" :style="{height: height}" class="list" :current-item-id="currentId" duration="200">
       <swiper-item item-id="daily">
+        <Loading v-if="!trendingD.length" />
         <scroll-view
         class="list-view"
         :style="{height: height}"
@@ -27,10 +27,30 @@
         </scroll-view>
       </swiper-item>
       <swiper-item item-id="weekly">
-        <p>2</p>
+        <Loading v-if="!trendingW.length" />
+        <scroll-view
+        v-if="trendingW.length"
+        class="list-view"
+        :style="{height: height}"
+        enable-back-to-top="true"
+        scroll-y="true">
+          <div class="repo-item" v-for="(item, index) in trendingW" :key="index">
+            <trending-item :trending="item"></trending-item>
+          </div>
+        </scroll-view>
       </swiper-item>
       <swiper-item item-id="monthly">
-        <p>3</p>
+        <Loading v-if="!trendingM.length" />
+        <scroll-view
+        v-if="trendingM.length"
+        class="list-view"
+        :style="{height: height}"
+        enable-back-to-top="true"
+        scroll-y="true">
+          <div class="repo-item" v-for="(item, index) in trendingM" :key="index">
+            <trending-item :trending="item"></trending-item>
+          </div>
+        </scroll-view>
       </swiper-item>
     </swiper>
   </div>
@@ -57,10 +77,8 @@ export default {
         this.height = res.windowHeight
       }
     })
-
-    this.trendingD = await this.getTrending(this.currentId, this.langs[this.index])
   },
-  onLoad () {
+  async onLoad () {
     let query = wx.createSelectorQuery()
 
     query.select('#picker').boundingClientRect()
@@ -72,14 +90,16 @@ export default {
       this.height = this.height - pickerH - tabsH + 'px'
       this.assignTabsH(tabsH)
     })
+
+    this.trendingD = await this.getTrending(this.currentId, this.langs[this.index])
   },
   data () {
     return {
-      langs: ['All Language', 'JavaScript', 'PHP', 'Node', 'Java', 'C++', 'C', 'Python', 'Go'],
+      langs: ['All Language', 'JavaScript', 'PHP', 'Java', 'C++', 'C', 'Python', 'Go'],
       index: 0,
       tabs: [{
         id: 'daily',
-        name: 'DAYLY'
+        name: 'DAILY'
       }, {
         id: 'weekly',
         name: 'WEEKLY'
@@ -102,16 +122,36 @@ export default {
   },
   methods: {
     pickerChange (e) {
+      if (e.mp.detail.value === this.index) {
+        return
+      }
       this.index = e.mp.detail.value
-      console.log(e.mp.detail.value)
+      this.trendingD = []
+      this.trendingW = []
+      this.trendingM = []
+      this.switchPage()
     },
     getTab (data) {
-      // this.currentId = data.id
-      console.log(data)
+      this.currentId = data.id
     },
     async getTrending (time, lang) {
       const data = await api.getTrending(time, lang)
       return dealTrending(data.data)
+    },
+    async pageChange (e) {
+      const currentItemId = e.mp.detail.currentItemId
+      this.currentId = currentItemId
+      this.currentIndex = e.mp.detail.current
+      this.switchPage()
+    },
+    async switchPage () {
+      if (!this.trendingW.length && this.currentId === 'weekly') {
+        this.trendingW = await this.getTrending('weekly', this.langs[this.index])
+      } else if (!this.trendingM.length && this.currentId === 'monthly') {
+        this.trendingM = await this.getTrending('monthly', this.langs[this.index])
+      } else if (!this.trendingD.length && this.currentId === 'daily') {
+        this.trendingD = await this.getTrending('daily', this.langs[this.index])
+      }
     },
     ...mapMutations([
       'assignTabsH'

@@ -8,7 +8,7 @@
     <div class="bottom">
       <p class="icon-star"> {{trending['stargazers_count']}}</p>
       <p class="icon-flow-branch"> {{trending['forks_count']}}</p>
-      <p class="icon-star increment"> {{trending.increment}} star today</p>
+      <p class="icon-star increment"> {{trending.increment}} stars today</p>
     </div>
   </div>
 </template>

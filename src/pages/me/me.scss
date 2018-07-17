@@ -1,5 +1,103 @@
 .me-container {
-  background-color: #eee;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Login Form */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 50px auto;
+  position: relative;
+  width: 280px;
+  height: auto;
+  box-sizing: border-box;
+}
+
+.login-container p {
+  align-self: flex-start;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.login-container p a {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.login {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  margin: 0 0 10px 0;
+  box-sizing: border-box;
+  border-radius: 3px;
+  background: #FAFAFA;
+  overflow: hidden;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12),
+              0 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
+.login > header {
+  position: relative;
+  width: 100%;
+  padding: 10px;
+  margin: -10px -10px 25px -10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #009688;
+  background-image: url('http://oghi29b7h.bkt.clouddn.com/Octocat.png');
+  background-position: 20%;
+  background-size: 220%;
+  font-size: 24px;
+  color: #FAFAFA;
+  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+              0px 1px 5px 0px rgba(0, 0, 0, 0.12),
+              0px 3px 1px -2px rgba(0, 0, 0, 0.2);
+}
+
+.login > header h2 {
+  margin: 50px 0 10px 0;
+}
+
+.login > header h4 {
+  font-size: 16px;
+  animation: text_opacity 1.5s cubic-bezier(.55, 0, .1, 1);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Form */
+.login-form {
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+
+/* Inputs */
+.login-input {
+  width: 100%;
+  margin-bottom: 24px;
+  border: none;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  background: transparent;
+  font-size: 18px;
+  outline: none;
+  transition: border-bottom 0.2s cubic-bezier(.55, 0, .1, 1);
+}
+
+.login-input:hover{
+  border-bottom: 2px solid #E37F00;
+}
+
+
+/* Submit Button */
+.login-button {
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  font-size: 18px;
+  color: #E37F00;
 }
 
 
