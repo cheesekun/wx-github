@@ -68,6 +68,9 @@
           <div class="repo-item" v-for="(item, index) in starreds" :key="index">
             <repo-item :repo="item"></repo-item>
           </div>
+          <Loading v-if="starred.loading"/>
+          <load-end v-else-if="starred.loadEnd" />
+          <no-data v-else-if="starred.noData" />
         </scroll-view>
       </swiper-item>
     </swiper>
@@ -83,7 +86,10 @@
 import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
 import RepoItem from '@/components/repoItem/repoItem'
-import {dealRepos} from '@/utils/index'
+import Loading from '@/components/loading/loading'
+import LoadEnd from '@/components/loadEnd/loadEnd'
+import NoData from '@/components/noData/noData'
+import {_query, dealRepos} from '@/utils/index'
 import wx from 'wx'
 
 export default {
@@ -111,10 +117,10 @@ export default {
     }
   },
   onHide () {
-    console.log(11)
+    // console.log(11)
   },
   onLoad () {
-    console.log(22)
+    // console.log(22)
     this.starreds = []
     this.events = []
     this.currentId = 'info'
@@ -124,7 +130,9 @@ export default {
     // FIXME: 感觉要重构
     // this.currentId = 'starred'
     // this.currentIndex = 2
-    console.log(33)
+    // console.log(33)
+    this.starred.q.page = 0
+    this.event.q.page = 0
   },
   props: {
     info: {
@@ -148,13 +156,32 @@ export default {
       currentIndex: 0,
       events: [],
       starreds: [],
+      event: {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      },
+      starred: {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      },
       height: '',
       isMe: false
     }
   },
   components: {
     Tabs,
-    RepoItem
+    RepoItem,
+    Loading,
+    LoadEnd,
+    NoData
   },
   methods: {
     getTab (data) {
@@ -165,11 +192,27 @@ export default {
       const data = await api.getEvents(user)
       return data
     },
+    /**
+     * TODO: 考虑一下要不要搞触底加载
+    */
     async getStarred () {
+      this.starred.q.page += 1
       let user = this.info.login
-      const data = await api.getStarred(user)
+      const q = _query(this.starred.q)
+      const data = await api.getStarred(user, q)
+      if (data.length === 0) {
+        this.starred.loading = false
+        this.starred.q.page -= 1
+        if (this.starred.q.page === 0) {
+          this.starred.noData = true
+        } else {
+          this.starred.loadEnd = true
+        }
+        return
+      }
       let starreds = dealRepos(data)
-      this.starreds = starreds
+      this.starreds = this.starreds.concat(starreds)
+      // this.starreds.push(...starreds)
     },
     pageChange (e) {
       const currentItemId = e.mp.detail.currentItemId
@@ -182,8 +225,12 @@ export default {
         // this.getEvents()
       }
     },
-    scrollTolower (e) {
-      console.log(e)
+    scrollToLower () {
+      if (this.currentId === 'starred') {
+        this.getStarred()
+      } else {
+        // this.getUsers()
+      }
     },
     toFollowers (user) {
       wx.navigateTo({
