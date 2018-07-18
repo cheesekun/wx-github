@@ -17,8 +17,7 @@
         <scroll-view
         :style="{height: height}"
         enable-back-to-top="true"
-        scroll-y="true"
-        @scroll="scroll">
+        scroll-y="true">
           <div class="info-p">
             <div class="name-wrapper">
               <p @click="toUser(repo.owner.login)" class="name">{{repo.owner.login}}</p>
@@ -46,20 +45,25 @@
           </div>
           <div class="readme">
             <h2 class="readme-name">README</h2>
-            <wxParse :content="readme" />
+            <!-- <wxParse :content="readme" /> -->
+            <wxparser class="wxParse" :rich-text="readme" />
           </div>
         </scroll-view>
       </swiper-item>
       <swiper-item item-id="commits">
-        <p>2</p>
-        <!-- <scroll-view
-        class="list-view"
+        <scroll-view
+        :style="{height: height}"
         enable-back-to-top="true"
         scroll-y="true"
-        @scrolltolower="scrollToLower('users')"
+        @scrolltolower="scrollToLower('commits')"
         @scroll="scroll">
-
-        </scroll-view> -->
+          <div class="commit-item" v-for="(item, index) in commits" :key="index">
+            <commit-item :commit="item"></commit-item>
+          </div>
+          <Loading v-if="commit.loading"/>
+          <load-end v-else-if="commit.loadEnd" />
+          <no-data v-else-if="commit.noData" />
+        </scroll-view>
       </swiper-item>
       <swiper-item item-id="activity">
         <p>activity</p>
@@ -82,10 +86,14 @@
 import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
 import Loading from '@/components/loading/loading'
-import { dealRepo } from '@/utils'
+import LoadEnd from '@/components/loadEnd/loadEnd'
+import NoData from '@/components/noData/noData'
+import CommitItem from '@/components/commitItem/commitItem'
+
+import { _query, dealRepo, dealCommits } from '@/utils'
 
 import marked from 'marked'
-import wxParse from 'mpvue-wxparse'
+// import wxParse from 'mpvue-wxparse'
 import { Base64 } from 'js-base64'
 /**
  * TODO: 传入query为 owner & repo
@@ -108,8 +116,28 @@ export default {
 
       this.height = this.height - topH - tabsH + 'px'
     })
+    /**
+     * FIXME: 为什么清空就会炸呢
+    */
+    // this.readme = ''
+    // this.repo = {}
+    // console.log(this.readme)
+    // console.log(this.repo)
+    this.commits = []
+    this.activities = []
+    this.currentId = 'info'
+    this.currentIndex = 0
   },
 
+  onUnload () {
+    this.commit.q.page = 0
+    this.activity.q.page = 0
+  },
+
+  /**
+   * FIXME: 数据加载不应该放在show这一块
+   * 至少要加个判断
+  */
   async onShow () {
     this.loading = true
     let query = this.$root.$mp.query
@@ -134,8 +162,11 @@ export default {
   },
 
   onHide () {
-    this.repo = {}
-    this.readme = ''
+    /**
+     * 处理掉所有的onHide
+    */
+    // this.repo = {}
+    // this.readme = ''
   },
   data () {
     return {
@@ -154,13 +185,33 @@ export default {
       currentIndex: 0,
       height: '',
       readme: '',
+      commits: [],
+      activities: [],
+      commit: {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      },
+      activity: {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      },
       loading: false
     }
   },
   components: {
     Tabs,
-    wxParse,
-    Loading
+    Loading,
+    LoadEnd,
+    NoData,
+    CommitItem
   },
   methods: {
     getTab (data) {
@@ -168,8 +219,27 @@ export default {
     },
     async getRepo (owner, repo) {
       const data = await api.getRepo(owner, repo)
-      console.log(data)
       return data
+    },
+    /**
+     * TODO: 考虑一下要不要搞触底加载
+    */
+    async getCommits () {
+      this.commit.q.page += 1
+      const owner = this.repo.owner.login
+      const repo = this.repo.name
+      const q = _query(this.commit.q)
+      const data = await api.getCommits(owner, repo, q)
+      if (data.length === 0) {
+        this.commit.loadEnd = true
+        this.commit.loading = false
+        this.commit.q.page -= 1
+        return
+      }
+      let commits = dealCommits(data)
+
+      // this.commits.push(...commits)
+      this.commits = this.commits.concat(commits)
     },
     toUser (user) {
       wx.navigateTo({
@@ -180,6 +250,19 @@ export default {
       const currentItemId = e.mp.detail.currentItemId
       this.currentId = currentItemId
       this.currentIndex = e.mp.detail.current
+
+      if (!this.commits.length && currentItemId === 'commits') {
+        this.getCommits()
+      } else if (!this.activities.length && currentItemId === 'activity') {
+        // this.getEvents()
+      }
+    },
+    scrollToLower () {
+      if (this.currentId === 'commits') {
+        this.getCommits()
+      } else {
+        // this.getUsers()
+      }
     }
   },
   computed: {

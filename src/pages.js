@@ -59,7 +59,10 @@ module.exports = [
     name: 'repo',
     config: {
       enablePullDownRefresh: false,
-      navigationBarTitleText: 'Repository'
+      navigationBarTitleText: 'Repository',
+      usingComponents: {
+        wxparser: 'plugin://wxparserPlugin/wxparser'
+      }
     }
   }, {
     path: '/pages/repos/repos',
