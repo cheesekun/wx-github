@@ -26,7 +26,7 @@ export function formatTime (date) {
 /**
  * query数据封装
  */
-export function _query (p, q) {
+export function _query (p = {}, q = {}) {
   return Object.assign({
     per_page
   }, p, q)
@@ -153,7 +153,7 @@ export function dealTrending (data) {
 /**
  * commit 数据处理
 */
-export function dealCommit (data) {
+export function dealCommits (data) {
   let commits = []
   commits = data.map(item => {
     return {
@@ -165,7 +165,7 @@ export function dealCommit (data) {
       commit: {
         message: item.commit.message,
         comment_count: item.commit['comment_count'],
-        date: item.commit.committer.date
+        date: moment(item.commit.committer.date).format('LL')
       }
     }
   })

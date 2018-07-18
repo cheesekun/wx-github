@@ -14,6 +14,10 @@ export default {
   config: {
     pages: [
       '^pages/trending/trending'
+      // '^pages/repo/repo'
+      // '^pages/search/search'
+      // '^pages/about/about'
+      // '^pages/me/me'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -43,6 +47,12 @@ export default {
         iconPath: 'static/img/me.png',
         selectedIconPath: 'static/img/me-r.png'
       }]
+    },
+    plugins: {
+      'wxparserPlugin': {
+        'version': '0.1.0',
+        'provider': 'wx9d4d4ffa781ff3ac'
+      }
     }
   }
 }

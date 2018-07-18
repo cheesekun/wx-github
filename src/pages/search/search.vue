@@ -10,7 +10,7 @@
     <div id="tabs" v-if="repos.length || users.length" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
-    <swiper class="list" :style="{height: height + 'px'}" @change="pageChange" :current-item-id="currentId" duration="200">
+    <swiper v-if="showSwiper" class="list" :style="{height: height + 'px'}" @change="pageChange" :current-item-id="currentId" duration="200">
       <swiper-item item-id="repos">
         <scroll-view
         class="list-view"
@@ -129,7 +129,8 @@
           noData: false
         },
         historys: [],
-        searchValue: ''
+        searchValue: '',
+        showSwiper: false
       }
     },
     computed: {
@@ -149,7 +150,8 @@
           return
         }
         let repos = dealRepos(data.items)
-        this.repos.push(...repos)
+        // this.repos.push(...repos)
+        this.repos = this.repos.concat(repos)
       },
       async getUsers () {
         this.usersQuery.page += 1
@@ -162,12 +164,14 @@
           return
         }
         let users = dealUsers(data.items)
-        this.users.push(...users)
+        // this.users.push(...users)
+        this.users = this.users.concat(users)
       },
       /**
        * TODO: 这个函数放了太多逻辑，拆一拆
       */
       search (e) {
+        this.showSwiper = true
         // 重置page
         this.reposQuery.page = this.usersQuery.page = 1
         q = e.mp.detail.value
@@ -225,10 +229,8 @@
       },
       scrollToLower () {
         if (this.currentId === 'repos') {
-          this.reposLoading = this.repos.length
           this.getRepos()
         } else {
-          this.usersLoading = this.users.length
           this.getUsers()
         }
       },

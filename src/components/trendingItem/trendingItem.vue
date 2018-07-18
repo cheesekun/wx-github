@@ -17,7 +17,7 @@
   export default {
     props: {
       trending: {
-        types: Object,
+        type: Object,
         defalt: {}
       }
     },

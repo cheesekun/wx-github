@@ -26,7 +26,7 @@ export default {
    * 只能利用小程序自带的生命周期了
    */
   onHide () {
-    this.info = {}
+    // this.info = {}
   },
   data () {
     return {
