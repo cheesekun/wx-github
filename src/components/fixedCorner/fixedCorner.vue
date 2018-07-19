@@ -1,6 +1,6 @@
 <template>
   <div class="fixed-icon">
-    <div class="content">{{content}}</div>
+    <div class="corner-content">{{content}}</div>
   </div>
 </template>
 
