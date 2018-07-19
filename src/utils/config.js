@@ -5,8 +5,9 @@
  */
 export const per_page = 10
 
-export const OK = 1000
-export const ERR = 1001
+export const REQ_OK = 1000
+export const REQ_ERR = 1001
+export const OAUTH_ERR = 1101
 
 /**
  * star follow 标识码
