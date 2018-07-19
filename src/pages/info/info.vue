@@ -1,6 +1,6 @@
 <template>
   <div class="info-container">
-    <User :info="info" />
+    <User :info="info" :followContent="followContent" />
   </div>
 </template>
 
@@ -8,6 +8,7 @@
 import api from '@/utils/api'
 import User from '@/components/user/user'
 import { getQuery, dealUser } from '@/utils'
+import {FOLLOWED, UNFOLLOW} from '@/utils/config'
 // import wx from 'wx'
 
 export default {
@@ -20,6 +21,7 @@ export default {
     const options = getQuery()
     const user = options.login
     this.info = await this.getInfo(user)
+    await this.isFollow(this.info.login)
   },
   /**
    * mpvue 的声明周期没有监听页面卸载
@@ -30,7 +32,8 @@ export default {
   },
   data () {
     return {
-      info: {}
+      info: {},
+      followContent: ''
     }
   },
   components: {
@@ -40,6 +43,14 @@ export default {
     async getInfo (user) {
       const info = dealUser(await api.getInfo(user))
       return info
+    },
+    async isFollow (user) {
+      const data = await api.getIsFollow(user)
+      if (data.status === FOLLOWED) {
+        this.followContent = 'UNFOLLOW'
+      } else if (data.status === UNFOLLOW) {
+        this.followContent = 'FOLLOW'
+      }
     }
   }
 }

@@ -7,6 +7,10 @@
         <p class="desc">{{repo.description}}</p>
         <p>Language {{repo.language}}，size {{size}}</p>
       </div>
+      <!-- corner -->
+      <div @click="star" class="corner">
+        <fixed-corner :content="starContent"></fixed-corner>
+      </div>
     </div>
     <div id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
@@ -89,7 +93,8 @@ import Loading from '@/components/loading/loading'
 import LoadEnd from '@/components/loadEnd/loadEnd'
 import NoData from '@/components/noData/noData'
 import CommitItem from '@/components/commitItem/commitItem'
-
+import FixedCorner from '@/components/fixedCorner/fixedCorner'
+import {STARRED, UNSTAR, STAR_SUCCESS, STAR_FAIL, DELETE_STAR_SUCCESS, DELETE_STAR_FAIL} from '@/utils/config'
 import { _query, dealRepo, dealCommits } from '@/utils'
 
 import marked from 'marked'
@@ -152,10 +157,11 @@ export default {
     Promise.all([getReadme, getRepo]).then(datas => {
       this.loading = false
       this.repo = dealRepo(datas[1])
-      if (datas[0] === undefined) {
+      this.isStar(this.repo.owner.login, this.repo.name)
+      if (datas[0].isExist === false) {
         this.readme = '此仓库无README.'
       } else {
-        let readme = Base64.decode(datas[0].content)
+        let readme = Base64.decode(datas[0].file.content)
         this.readme = marked(readme)
       }
     })
@@ -203,7 +209,8 @@ export default {
         loadEnd: false,
         noData: false
       },
-      loading: false
+      loading: false,
+      starContent: 'STAR'
     }
   },
   components: {
@@ -211,7 +218,8 @@ export default {
     Loading,
     LoadEnd,
     NoData,
-    CommitItem
+    CommitItem,
+    FixedCorner
   },
   methods: {
     getTab (data) {
@@ -240,6 +248,41 @@ export default {
 
       // this.commits.push(...commits)
       this.commits = this.commits.concat(commits)
+    },
+    async isStar (owner, repo) {
+      const data = await api.getIsStar(owner, repo)
+      if (data.status === STARRED) {
+        this.starContent = 'UNSTAR'
+      } else if (data.status === UNSTAR) {
+        this.starContent = 'STAR'
+      }
+    },
+    async putStar () {
+      const owner = this.repo.owner.login
+      const repo = this.repo.name
+      const data = await api.putStar(owner, repo)
+      if (data.status === STAR_SUCCESS) {
+        this.starContent = 'UNSTAR'
+      } else if (data.status === STAR_FAIL) {
+        this.starContent = 'STAR'
+      }
+    },
+    async deleteStar () {
+      const owner = this.repo.owner.login
+      const repo = this.repo.name
+      const data = await api.deleteStar(owner, repo)
+      if (data.status === DELETE_STAR_SUCCESS) {
+        this.starContent = 'STAR'
+      } else if (data.status === DELETE_STAR_FAIL) {
+        this.starContent = 'UNSTAR'
+      }
+    },
+    star () {
+      if (this.starContent === 'UNSTAR') {
+        this.deleteStar()
+      } else {
+        this.putStar()
+      }
     },
     toUser (user) {
       wx.navigateTo({

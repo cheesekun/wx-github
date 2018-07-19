@@ -10,15 +10,22 @@
           <p>Joined at {{info['created_at']}}</p>
         </div>
       </div>
+      <!-- corner -->
+      <div @click="follow" v-if="!isMe" class="corner">
+        <fixed-corner :content="followContent"></fixed-corner>
+      </div>
     </div>
     <div id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
-    <swiper @change="pageChange" :style="{height: height}" class="list" :current-item-id="currentId" duration="200">
+    <swiper @change="pageChange" :style="{height: height + 'px'}" class="list" :current-item-id="currentId" duration="200">
       <swiper-item item-id="info">
         <div class="info-p">
-          <p class="name">{{info.name}}</p>
-          <p>{{info.bio}}</p>
+          <div class="follow-area">
+            <p v-if="info.name" class="name">{{info.name}}</p>
+            <p v-else class="name">{{info.login}}</p>
+          </div>
+          <p v-if="info.bio">{{info.bio}}</p>
           <p v-if="info.company"><span class="icon-users icon"></span>{{info.company}}</p>
           <p v-if="info.email"><span class="icon-envelop icon"></span>{{info.email}}</p>
           <p v-if="info.blog"><span class="icon-earth icon"></span>{{info.blog}}</p>
@@ -59,7 +66,7 @@
       </swiper-item>
       <swiper-item item-id="starred">
         <scroll-view
-        :style="{height: height}"
+        :style="{height: height + 'px'}"
         enable-back-to-top="true"
         scroll-y="true"
         @scrolltolower="scrollToLower('starred')"
@@ -89,7 +96,10 @@ import RepoItem from '@/components/repoItem/repoItem'
 import Loading from '@/components/loading/loading'
 import LoadEnd from '@/components/loadEnd/loadEnd'
 import NoData from '@/components/noData/noData'
+import FixedCorner from '@/components/fixedCorner/fixedCorner'
+import { mapState } from 'vuex'
 import {_query, dealRepos} from '@/utils/index'
+import {FOLLOW_SUCCESS, FOLLOW_FAIL, DELETE_FOLLOW_SUCCESS, DELETE_FOLLOW_FAIL} from '@/utils/config'
 import wx from 'wx'
 
 export default {
@@ -100,16 +110,9 @@ export default {
       }
     })
 
-    let query = wx.createSelectorQuery()
-    // 选择id
-    query.select('#top').boundingClientRect()
-    query.select('#tabs').boundingClientRect()
-    query.exec(res => {
-      let topH = res[0].height
-      let tabsH = res[1].height
-
-      this.height = this.height - topH - tabsH + 'px'
-    })
+    // 以tabs的比例来计算高度
+    let topH = 2 * this.tabsH
+    this.height = this.height - topH - this.tabsH
 
     const pageRoute = this.$root.$mp.page.route
     if (pageRoute.indexOf('/me') !== -1) {
@@ -138,6 +141,10 @@ export default {
     info: {
       type: Object,
       default: {}
+    },
+    followContent: {
+      type: String,
+      default: 'FOLLOW'
     }
   },
   data () {
@@ -173,7 +180,8 @@ export default {
         noData: false
       },
       height: '',
-      isMe: false
+      isMe: false,
+      followContent: 'FOLLOW'
     }
   },
   components: {
@@ -181,7 +189,8 @@ export default {
     RepoItem,
     Loading,
     LoadEnd,
-    NoData
+    NoData,
+    FixedCorner
   },
   methods: {
     getTab (data) {
@@ -213,6 +222,31 @@ export default {
       let starreds = dealRepos(data)
       this.starreds = this.starreds.concat(starreds)
       // this.starreds.push(...starreds)
+    },
+    async putFollow () {
+      const user = this.info.login
+      const data = await api.putFollow(user)
+      if (data.status === FOLLOW_SUCCESS) {
+        this.followContent = 'UNFOLLOW'
+      } else if (data.status === FOLLOW_FAIL) {
+        this.followContent = 'FOLLOW'
+      }
+    },
+    async deleteFollow () {
+      const user = this.info.login
+      const data = await api.deleteFollow(user)
+      if (data.status === DELETE_FOLLOW_SUCCESS) {
+        this.followContent = 'FOLLOW'
+      } else if (data.status === DELETE_FOLLOW_FAIL) {
+        this.followContent = 'UNFOLLOW'
+      }
+    },
+    follow () {
+      if (this.followContent === 'UNFOLLOW') {
+        this.deleteFollow()
+      } else {
+        this.putFollow()
+      }
     },
     pageChange (e) {
       const currentItemId = e.mp.detail.currentItemId
@@ -262,6 +296,11 @@ export default {
         url: '/pages/about/about'
       })
     }
+  },
+  computed: {
+    ...mapState([
+      'tabsH'
+    ])
   }
 }
 </script>

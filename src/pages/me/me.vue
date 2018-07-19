@@ -1,7 +1,7 @@
 <template>
   <div class="me-container">
     <!-- <Info :info="info" /> -->
-    <User :info="info" v-if="!auth" />
+    <User :info="info" v-if="auth" />
     <div class="login-container" v-else>
       <section class="login" id="login">
         <header>
@@ -14,6 +14,9 @@
           <button type="submit" @click="login" class="login-button">SIGN IN</button>
         </form>
       </section>
+      <div @click="toAbout" class="about">
+        <img src="https://avatars0.githubusercontent.com/u/21058528?v=4" alt="cheesekun">
+      </div>
     </div>
   </div>
 </template>
@@ -27,8 +30,7 @@ import wx from 'wx'
 export default {
   async created () {
     this.getAuth()
-    // TODO: 记得改回来
-    if (this.auth === false) {
+    if (this.auth) {
       const me = await this.getMe()
       this.info = me
     }
@@ -41,7 +43,7 @@ export default {
       info: {},
       username: '',
       password: '',
-      auth: false
+      auth: ''
     }
   },
   components: {
@@ -51,14 +53,14 @@ export default {
     async login () {
       const auth = await api.login(this.username, this.password)
       // 如果 auth 为空，也就是说账户密码错误什么的
-      if (auth === '') {
+      if (!auth) {
         return
       }
       const authStr = JSON.stringify(auth)
-      wx.setStorage({
-        key: 'auth',
-        data: authStr
-      })
+      wx.setStorageSync('auth', authStr)
+      this.auth = true
+      const me = await this.getMe()
+      this.info = me
     },
     async getMe () {
       const info = dealUser(await api.getMe())
@@ -68,20 +70,13 @@ export default {
      * 获取本地存储的auth
     */
     getAuth () {
-      try {
-        let auth = wx.getStorageSync('auth')
-        if (!auth) {
-          this.auth = false
-        }
-        console.log(11)
-      } catch (e) {
-        this.auth = false
-        console.log(22)
-        // wx.setStorage({
-        //   key: 'auth',
-        //   data: '{}'
-        // })
-      }
+      let auth = wx.getStorageSync('auth')
+      this.auth = auth
+    },
+    toAbout () {
+      wx.navigateTo({
+        url: '/pages/about/about'
+      })
     }
   }
 }
