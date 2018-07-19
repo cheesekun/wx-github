@@ -95,7 +95,7 @@ export default {
   },
   data () {
     return {
-      langs: ['All Language', 'JavaScript', 'PHP', 'Java', 'C++', 'C', 'Python', 'Go'],
+      langs: ['All Language', 'JavaScript', 'PHP', 'Java', 'C++', 'C', 'Python', 'Go', 'Vue', 'TypeScript', 'C#'],
       index: 0,
       tabs: [{
         id: 'daily',
@@ -136,7 +136,7 @@ export default {
     },
     async getTrending (time, lang) {
       const data = await api.getTrending(time, lang)
-      return dealTrending(data.data)
+      return dealTrending(data)
     },
     async pageChange (e) {
       const currentItemId = e.mp.detail.currentItemId
