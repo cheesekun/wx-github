@@ -5,10 +5,10 @@
       <div class="content">
         <p class="name">{{repo.name}}</p>
         <p class="desc">{{repo.description}}</p>
-        <p>Language {{repo.language}}，size {{size}}</p>
+        <p>Language {{repo.language}}，size {{repo.size}}</p>
       </div>
       <!-- corner -->
-      <div @click="star" class="corner">
+      <div v-if="isLogin" @click="star" class="corner">
         <fixed-corner :content="starContent"></fixed-corner>
       </div>
     </div>
@@ -96,6 +96,7 @@ import CommitItem from '@/components/commitItem/commitItem'
 import FixedCorner from '@/components/fixedCorner/fixedCorner'
 import {STARRED, UNSTAR, STAR_SUCCESS, STAR_FAIL, DELETE_STAR_SUCCESS, DELETE_STAR_FAIL} from '@/utils/config'
 import { _query, dealRepo, dealCommits } from '@/utils'
+import { mapState } from 'vuex'
 
 import marked from 'marked'
 // import wxParse from 'mpvue-wxparse'
@@ -157,7 +158,9 @@ export default {
     Promise.all([getReadme, getRepo]).then(datas => {
       this.loading = false
       this.repo = dealRepo(datas[1])
-      this.isStar(this.repo.owner.login, this.repo.name)
+      if (this.isLogin) {
+        this.isStar(this.repo.owner.login, this.repo.name)
+      }
       if (datas[0].isExist === false) {
         this.readme = '此仓库无README.'
       } else {
@@ -309,14 +312,9 @@ export default {
     }
   },
   computed: {
-    size () {
-      let repoSize = this.repo.size
-      if (this.repo.size < 1024) {
-        return repoSize.toFixed(2) + ' KB'
-      } else {
-        return (repoSize / 1024).toFixed(2) + ' MB'
-      }
-    }
+    ...mapState([
+      'isLogin'
+    ])
   }
 }
 </script>

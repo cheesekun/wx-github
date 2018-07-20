@@ -100,13 +100,20 @@ export function dealUser (data) {
     public_gists: data['public_gists'],
     followers: data.followers,
     following: data.following,
-    created_at: moment(data['created_at']).format('LL'),
+    created_at: moment(data['created_at']).format('ll'),
   }
 }
 
 /**
  * repo 数据处理
 */
+function dealSize (size) {
+  if (size < 1024) {
+    return size.toFixed(2) + ' KB'
+  } else {
+    return (size / 1024).toFixed(2) + ' MB'
+  }
+}
 export function dealRepo (data) {
   let repo = {
     name: data['name'],
@@ -116,9 +123,9 @@ export function dealRepo (data) {
       avatar_url: data['owner']['avatar_url']
     },
     description: data['description'],
-    created_at: moment(data['created_at']).format('LL'),
-    pushed_at: moment(data['pushed_at']).format('LL'),
-    size: data['size'],
+    created_at: moment(data['created_at']).format('ll'),
+    pushed_at: moment(data['pushed_at']).format('ll'),
+    size: dealSize(data['size']),
     stargazers_count: data['stargazers_count'],
     forks_count: data['forks_count'],
     open_issues_count: data['open_issues_count'],
@@ -151,7 +158,7 @@ export function dealTrending (data) {
 }
 
 /**
- * commit 数据处理
+ * commits 数据处理
 */
 export function dealCommits (data) {
   let commits = []
@@ -165,11 +172,102 @@ export function dealCommits (data) {
       commit: {
         message: item.commit.message,
         comment_count: item.commit['comment_count'],
-        date: moment(item.commit.committer.date).format('LL')
+        date: moment(item.commit.committer.date).format('ll')
       }
     }
   })
   return commits
+}
+
+/**
+ * events 数据处理
+*/
+function firstUpperCase(str) {
+  return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
+}
+function getPushCommits (commits) {
+  return commits.map(item => {
+    return {
+      message: item.message,
+      sha: item.sha.slice(0,7)
+    }
+  })
+}
+function dealEventType (type, payload) {
+  let obj = {}
+  switch (type) {
+    case 'PushEvent':
+      obj = {
+        ref: payload.ref.split('/').pop(),
+        commits: getPushCommits(payload.commits)
+      }
+      break
+    case 'WatchEvent':
+      obj = {
+        action: firstUpperCase(payload.action)
+      }
+      break
+    case 'CreateEvent':
+      obj = {
+        ref: payload.ref, // 通过是否为null，来判断是create repo，还是create branch
+        ref_type: payload['ref_type']
+      }
+      break
+    case 'PullRequestEvent':
+      obj = {
+        action: firstUpperCase(payload.action)
+      }
+      break
+    case 'ForkEvent':
+      obj = {
+        forkee: {
+          full_name: payload['full_name']
+        }
+      }
+      break
+    case 'IssuesEvent':
+      obj = {
+        action: firstUpperCase(payload.action),
+        issue: {
+          number: payload.issue.number,
+          title: payload.issue.title
+        }
+      }
+      break
+    case 'IssueCommentEvent':
+      obj = {
+        action: firstUpperCase(payload.action),
+        issue: {
+          body: payload.issue.body
+        }
+      }
+      break
+    default:
+      obj = {}
+  }
+
+  return obj
+}
+
+export function dealEvents (data) {
+  let events = []
+  events = data.map(item => {
+    console.log(dealEventType(item.type, item.payload))
+    return {
+      type: item.type,
+      actor: {
+        login: item.actor.login,
+        avatar_url: item.actor['avatar_url']
+      },
+      repo: {
+        name: item.repo.name
+      },
+      payload: {},
+      // payload: dealEventType(item.type, item.payload),
+      created_at: moment(item['created_at']).format('ll')
+    }
+  })
+  return events
 }
 
 /**

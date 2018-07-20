@@ -45,7 +45,11 @@ const api = {
     baseURL
   }),
 
-  getEvents: (user) => request.get(`/users/${user}/events`, null, {
+  getUserEvents: (user) => request.get(`/users/${user}/events`, null, {
+    baseURL
+  }),
+
+  getRepoEvents: (owner, repo) => request.get(`/repos/${owner}/${repo}/events`, null, {
     baseURL
   }),
 
@@ -54,6 +58,10 @@ const api = {
   }),
 
   getFollowing: (user) => request.get(`/users/${user}/following`, null, {
+    baseURL
+  }),
+
+  getMembers: (org) => request.get(`/orgs/${org}/members`, null, {
     baseURL
   }),
 

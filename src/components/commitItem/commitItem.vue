@@ -9,7 +9,7 @@
       <p class="commit-desc">{{commit.commit.message}}</p>
       <div class="bottom">
         <p> {{commit.sha}}</p>
-        <p class="icon-user"> {{commit.commit['comment_count']}}</p>
+        <p class="icon-bubbles"> {{commit.commit['comment_count']}}</p>
       </div>
     </div>
   </div>

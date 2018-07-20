@@ -17,9 +17,10 @@
   }
 
   .commit {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    margin-left: 10px;
+    padding-left: 10px;
     flex: 1;
     .commit-top {
       display: flex;
@@ -33,23 +34,25 @@
       }
       .commit-date {
         color: $color-font-grey;
-        @include text-over();
       }
     }
     .commit-desc {
       font-size: 14px;
       padding-bottom: 5px;
       line-height: 1.2;
+      // @include text-over-multiple(4);
+      word-wrap: break-word;
+      word-break: break-all;
     }
     .bottom {
       display: flex;
-      width: 240px;
+      width: 280px;
       margin-top: 4px;
       justify-content: space-between;
+      align-items: center;
       font-size: 13px;
       color: $color-font-grey;
       p {
-        width: 80px;
         overflow: hidden;
         text-overflow:ellipsis;
         white-space: nowrap;
