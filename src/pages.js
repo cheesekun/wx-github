@@ -48,6 +48,14 @@ module.exports = [
     }
   },
   {
+    path: '/pages/members/members',
+    name: 'members',
+    config: {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: 'Members'
+    }
+  },
+  {
     path: '/pages/about/about',
     name: 'about',
     config: {
