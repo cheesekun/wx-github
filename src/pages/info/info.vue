@@ -1,14 +1,17 @@
 <template>
   <div class="info-container">
-    <User :info="info" :followContent="followContent" />
+    <User v-if="info.type === 'User'" :info="info" :followContent="followContent" />
+    <Org v-if="info.type === 'Organization'" :info="info" />
   </div>
 </template>
 
 <script>
 import api from '@/utils/api'
 import User from '@/components/user/user'
+import Org from '@/components/org/org'
 import { getQuery, dealUser } from '@/utils'
 import {FOLLOWED, UNFOLLOW} from '@/utils/config'
+import { mapState } from 'vuex'
 // import wx from 'wx'
 
 export default {
@@ -21,7 +24,9 @@ export default {
     const options = getQuery()
     const user = options.login
     this.info = await this.getInfo(user)
-    await this.isFollow(this.info.login)
+    if (this.isLogin && this.info.type === 'User') {
+      await this.isFollow(this.info.login)
+    }
   },
   /**
    * mpvue 的声明周期没有监听页面卸载
@@ -37,7 +42,8 @@ export default {
     }
   },
   components: {
-    User
+    User,
+    Org
   },
   methods: {
     async getInfo (user) {
@@ -52,6 +58,11 @@ export default {
         this.followContent = 'FOLLOW'
       }
     }
+  },
+  computed: {
+    ...mapState([
+      'isLogin'
+    ])
   }
 }
 </script>

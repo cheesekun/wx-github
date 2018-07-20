@@ -11,7 +11,7 @@
         </div>
       </div>
       <!-- corner -->
-      <div @click="follow" v-if="!isMe" class="corner">
+      <div @click="follow" v-if="isCornerShow" class="corner">
         <fixed-corner :content="followContent"></fixed-corner>
       </div>
     </div>
@@ -54,15 +54,16 @@
         </div>
       </swiper-item>
       <swiper-item item-id="activity">
-        <p>2</p>
-        <!-- <scroll-view
-        class="list-view"
+        <scroll-view
+        :style="{height: height + 'px'}"
         enable-back-to-top="true"
         scroll-y="true"
-        @scrolltolower="scrollToLower('users')"
+        @scrolltolower="scrollToLower('event')"
         @scroll="scroll">
-
-        </scroll-view> -->
+          <div class="event-item" v-for="(item, index) in events" :key="index">
+            <event-item :event="item"></event-item>
+          </div>
+        </scroll-view>
       </swiper-item>
       <swiper-item item-id="starred">
         <scroll-view
@@ -97,8 +98,9 @@ import Loading from '@/components/loading/loading'
 import LoadEnd from '@/components/loadEnd/loadEnd'
 import NoData from '@/components/noData/noData'
 import FixedCorner from '@/components/fixedCorner/fixedCorner'
+import EventItem from '@/components/eventItem/eventItem'
 import { mapState } from 'vuex'
-import {_query, dealRepos} from '@/utils/index'
+import {_query, dealRepos, dealEvents} from '@/utils/index'
 import {FOLLOW_SUCCESS, FOLLOW_FAIL, DELETE_FOLLOW_SUCCESS, DELETE_FOLLOW_FAIL} from '@/utils/config'
 import wx from 'wx'
 
@@ -115,7 +117,12 @@ export default {
     this.height = this.height - topH - this.tabsH
 
     const pageRoute = this.$root.$mp.page.route
-    if (pageRoute.indexOf('/me') !== -1) {
+    if (pageRoute.indexOf('/me') === -1) {
+      this.isMe = false
+      if (this.isLogin) {
+        this.isCornerShow = true
+      }
+    } else {
       this.isMe = true
     }
   },
@@ -181,6 +188,7 @@ export default {
       },
       height: '',
       isMe: false,
+      isCornerShow: false,
       followContent: 'FOLLOW'
     }
   },
@@ -190,16 +198,18 @@ export default {
     Loading,
     LoadEnd,
     NoData,
-    FixedCorner
+    FixedCorner,
+    EventItem
   },
   methods: {
     getTab (data) {
       this.currentId = data.id
     },
-    async getEvents () {
+    async getUserEvents () {
       let user = this.info.login
-      const data = await api.getEvents(user)
-      return data
+      const data = await api.getUserEvents(user)
+      this.events = dealEvents(data)
+      // return data
     },
     /**
      * TODO: 考虑一下要不要搞触底加载
@@ -256,13 +266,16 @@ export default {
       if (!this.starreds.length && currentItemId === 'starred') {
         this.getStarred()
       } else if (!this.events.length && currentItemId === 'activity') {
-        // this.getEvents()
+        this.getUserEvents()
       }
     },
     scrollToLower () {
       if (this.currentId === 'starred') {
         this.getStarred()
       } else {
+        /**
+         * TODO: event 上滑加载
+         */
         // this.getUsers()
       }
     },
@@ -299,7 +312,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'tabsH'
+      'tabsH',
+      'isLogin'
     ])
   }
 }

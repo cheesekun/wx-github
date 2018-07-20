@@ -10,7 +10,7 @@
         </header>
         <form class="login-form">
           <input v-model="username" type="text" class="login-input" placeholder="User" />
-          <input v-model="password" type="password" class="login-input" placeholder="Password" />
+          <input @confirm="login" v-model="password" type="password" class="login-input" placeholder="Password" />
           <button type="submit" @click="login" class="login-button">SIGN IN</button>
         </form>
       </section>
@@ -25,6 +25,7 @@
 import api from '@/utils/api'
 import User from '@/components/user/user'
 import { dealUser } from '@/utils'
+import { mapMutations } from 'vuex'
 import wx from 'wx'
 
 export default {
@@ -58,6 +59,7 @@ export default {
       }
       const authStr = JSON.stringify(auth)
       wx.setStorageSync('auth', authStr)
+      this.comfirmLogin(true)
       this.auth = true
       const me = await this.getMe()
       this.info = me
@@ -77,7 +79,10 @@ export default {
       wx.navigateTo({
         url: '/pages/about/about'
       })
-    }
+    },
+    ...mapMutations([
+      'comfirmLogin'
+    ])
   }
 }
 </script>
