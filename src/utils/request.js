@@ -22,7 +22,6 @@ function getAuth () {
 
 request.interceptors.request.use((request) => {
   request.headers = getAuth()
-  console.log(getAuth())
   wx.showNavigationBarLoading()
   return request
 })

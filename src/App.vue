@@ -1,5 +1,21 @@
 <script>
+import { mapMutations } from 'vuex'
+import wx from 'wx'
+
 export default {
+  created () {
+    let auth = wx.getStorageSync('auth')
+    if (auth) {
+      this.comfirmLogin(true)
+    } else {
+      this.comfirmLogin(false)
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'comfirmLogin'
+    ])
+  }
 }
 </script>
 

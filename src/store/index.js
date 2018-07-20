@@ -5,10 +5,17 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    login: '',
+    isLogin: false,
+    user: '',
     tabsH: ''
   },
   mutations: {
+    setUser (state, user) {
+      state.user = user
+    },
+    comfirmLogin (state, status) {
+      state.isLogin = status
+    },
     assignTabsH (state, height) {
       state.tabsH = height
     }
