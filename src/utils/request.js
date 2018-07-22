@@ -2,7 +2,13 @@ import wx from 'wx'
 import Fly from 'flyio'
 import { REQ_ERR, REQ_OK, OAUTH_ERR } from '@/utils/config'
 
+const errorImg = '../../static/img/error.png'
+
 const request = new Fly()
+
+request.config = {
+  baseURL: 'https://api.github.com'
+}
 
 function getAuth () {
   let headers = {}
@@ -32,17 +38,19 @@ request.interceptors.response.use(
     const code = response.data.code
     if (code === REQ_ERR) {
       wx.showToast({
-        title: '我猜github挂了',
-        icon: 'success',
-        duration: 1500
+        title: '服务出错!',
+        icon: 'loading',
+        image: errorImg,
+        duration: 1200
       })
     } else if (code === REQ_OK) {
       return promise.resolve(response.data.data)
     } else if (code === OAUTH_ERR) {
       wx.showToast({
-        title: '我猜账户密码输入有误',
-        icon: 'success',
-        duration: 2000
+        title: '输入有误！',
+        icon: 'loading',
+        image: errorImg,
+        duration: 1200
       })
       return promise.resolve(response.data.data)
     }

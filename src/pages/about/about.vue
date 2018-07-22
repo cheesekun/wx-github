@@ -8,10 +8,17 @@
     </div>
     <div class="code block-bg">
       <h2>Code</h2>
-      <div @click="toRepo" class="item">
+      <div @click="toRepo('cheesekun')" class="item">
         <i class="icon-embed2"></i>
         <div class="content">
-          <p class="title">Scource code</p>
+          <p class="title">FrontEnd Code</p>
+          <p class="desc">Star to support me</p>
+        </div>
+      </div>
+      <div @click="toRepo('KonsonChow')" class="item">
+        <i class="icon-coffee"></i>
+        <div class="content">
+          <p class="title">BackEnd Code</p>
           <p class="desc">Star to support me</p>
         </div>
       </div>
@@ -41,6 +48,11 @@
     </div>
     <div class="todo block-bg">
       <h2>Todo</h2>
+      <ul class="todolist">
+        <li>1. 增加 gist 查看页</li>
+        <li>2. 增加 issue 查看页</li>
+        <li>3. 优化体验</li>
+      </ul>
     </div>
   </div>
 </template>
@@ -50,10 +62,16 @@ import wx from 'wx'
 
 export default {
   methods: {
-    toRepo () {
-      wx.navigateTo({
-        url: `/pages/repo/repo?owner=cheesekun&repo=wx-github`
-      })
+    toRepo (user) {
+      if (user === 'cheesekun') {
+        wx.navigateTo({
+          url: `/pages/repo/repo?owner=cheesekun&repo=wx-github`
+        })
+      } else {
+        wx.navigateTo({
+          url: `/pages/repo/repo?owner=KonsonChow&repo=wx-github-back-end`
+        })
+      }
     },
     toUser () {
       wx.navigateTo({
