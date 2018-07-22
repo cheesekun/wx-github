@@ -37,27 +37,12 @@
           </div>
         </div>
       </swiper-item>
-      <swiper-item item-id="activity">
-        <p>2</p>
-        <!-- <scroll-view
-        class="list-view"
-        enable-back-to-top="true"
-        scroll-y="true"
-        @scrolltolower="scrollToLower('users')"
-        @scroll="scroll">
-
-        </scroll-view> -->
-      </swiper-item>
     </swiper>
   </div>
 </template>
 
 <script>
-import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
-import Loading from '@/components/loading/loading'
-import LoadEnd from '@/components/loadEnd/loadEnd'
-import NoData from '@/components/noData/noData'
 import { mapState } from 'vuex'
 import wx from 'wx'
 
@@ -74,14 +59,12 @@ export default {
     this.height = this.height - topH - this.tabsH
   },
   onHide () {
-    // console.log(11)
   },
   onLoad () {
     this.currentId = 'info'
     this.currentIndex = 0
   },
   onUnload () {
-    this.event.q.page = 0
   },
   props: {
     info: {
@@ -94,54 +77,18 @@ export default {
       tabs: [{
         id: 'info',
         name: 'INFO'
-      }, {
-        id: 'activity',
-        name: 'ACTIVITY'
       }],
       currentId: 'info',
       currentIndex: 0,
-      events: [],
-      event: {
-        q: {
-          page: 0
-        },
-        loading: true,
-        loadEnd: false,
-        noData: false
-      },
       height: ''
     }
   },
   components: {
-    Tabs,
-    Loading,
-    LoadEnd,
-    NoData
+    Tabs
   },
   methods: {
     getTab (data) {
       this.currentId = data.id
-    },
-    async getEvents () {
-      let user = this.info.login
-      const data = await api.getEvents(user)
-      return data
-    },
-    pageChange (e) {
-      const currentItemId = e.mp.detail.currentItemId
-      this.currentId = currentItemId
-
-      this.currentIndex = e.mp.detail.current
-      if (!this.events.length && currentItemId === 'activity') {
-        // this.getEvents()
-      }
-    },
-    scrollToLower () {
-      if (this.currentId === 'starred') {
-        this.getStarred()
-      } else {
-        // this.getUsers()
-      }
     },
     toRepos (user) {
       wx.navigateTo({

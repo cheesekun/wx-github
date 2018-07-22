@@ -237,8 +237,26 @@ function dealEventType (type, payload) {
     case 'IssueCommentEvent':
       obj = {
         action: firstUpperCase(payload.action),
+        comment: {
+          body: payload.comment.body
+        },
         issue: {
-          body: payload.issue.body
+          number: payload.issue.number
+        }
+      }
+      break
+    case 'CommitCommentEvent':
+      obj = {
+        comment: {
+          body: payload.comment.body
+        }
+      }
+      break
+    case 'GollumEvent':
+      obj = {
+        pages: {
+          action: firstUpperCase(payload.pages[0].action),
+          page_name: payload.pages[0]['page_name']
         }
       }
       break
@@ -252,7 +270,6 @@ function dealEventType (type, payload) {
 export function dealEvents (data) {
   let events = []
   events = data.map(item => {
-    console.log(dealEventType(item.type, item.payload))
     return {
       type: item.type,
       actor: {
@@ -262,8 +279,7 @@ export function dealEvents (data) {
       repo: {
         name: item.repo.name
       },
-      payload: {},
-      // payload: dealEventType(item.type, item.payload),
+      payload: dealEventType(item.type, item.payload),
       created_at: moment(item['created_at']).format('ll')
     }
   })
