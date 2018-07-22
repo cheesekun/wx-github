@@ -70,17 +70,19 @@
         </scroll-view>
       </swiper-item>
       <swiper-item item-id="activity">
-        <p>activity</p>
-        <!-- <scroll-view
+        <scroll-view
         enable-back-to-top="true"
         scroll-y="true"
-        @scrolltolower="scrollToLower('starred')"
+        @scrolltolower="scrollToLower('event')"
         @scroll="scroll"
         :style="{height: height}">
-          <div class="repo-item" v-for="(item, index) in starreds" :key="index">
-            <repo-item :repo="item"></repo-item>
+          <div class="event-item" v-for="(item, index) in events" :key="index">
+            <event-item :event="item"></event-item>
           </div>
-        </scroll-view> -->
+          <Loading v-if="event.loading"/>
+          <load-end v-else-if="event.loadEnd" />
+          <no-data v-else-if="event.noData" />
+        </scroll-view>
       </swiper-item>
     </swiper>
   </div>
@@ -94,16 +96,14 @@ import LoadEnd from '@/components/loadEnd/loadEnd'
 import NoData from '@/components/noData/noData'
 import CommitItem from '@/components/commitItem/commitItem'
 import FixedCorner from '@/components/fixedCorner/fixedCorner'
-import {STARRED, UNSTAR, STAR_SUCCESS, STAR_FAIL, DELETE_STAR_SUCCESS, DELETE_STAR_FAIL} from '@/utils/config'
-import { _query, dealRepo, dealCommits } from '@/utils'
+import EventItem from '@/components/eventItem/eventItem'
+/* eslint-disable */
+import {per_page, STARRED, UNSTAR, STAR_SUCCESS, STAR_FAIL, DELETE_STAR_SUCCESS, DELETE_STAR_FAIL} from '@/utils/config'
+import { _query, getQuery, dealRepo, dealCommits, dealEvents } from '@/utils'
 import { mapState } from 'vuex'
-
 import marked from 'marked'
-// import wxParse from 'mpvue-wxparse'
 import { Base64 } from 'js-base64'
-/**
- * TODO: 传入query为 owner & repo
- */
+
 export default {
   onLoad () {
     wx.getSystemInfo({
@@ -123,31 +123,35 @@ export default {
       this.height = this.height - topH - tabsH + 'px'
     })
     /**
-     * FIXME: 为什么清空就会炸呢
+     * FIXME: 为什么清空readme就会炸呢
     */
-    // this.readme = ''
-    // this.repo = {}
-    // console.log(this.readme)
-    // console.log(this.repo)
     this.commits = []
-    this.activities = []
+    this.events = []
     this.currentId = 'info'
     this.currentIndex = 0
   },
 
-  onUnload () {
-    this.commit.q.page = 0
-    this.activity.q.page = 0
-  },
-
-  /**
-   * FIXME: 数据加载不应该放在show这一块
-   * 至少要加个判断
-  */
   async onShow () {
     this.loading = true
-    let query = this.$root.$mp.query
-    let {owner, repo} = query
+    this.commit = {
+      q: {
+        page: 0
+      },
+      loading: true,
+      loadEnd: false,
+      noData: false
+    }
+    this.event = {
+      q: {
+        page: 0
+      },
+      loading: true,
+      loadEnd: false,
+      noData: false
+    }
+
+    const options = getQuery()
+    const {owner, repo} = options
 
     let getRepo = api.getRepo(owner, repo)
     let getReadme = api.getReadme(owner, repo)
@@ -171,11 +175,6 @@ export default {
   },
 
   onHide () {
-    /**
-     * 处理掉所有的onHide
-    */
-    // this.repo = {}
-    // this.readme = ''
   },
   data () {
     return {
@@ -195,7 +194,7 @@ export default {
       height: '',
       readme: '',
       commits: [],
-      activities: [],
+      events: [],
       commit: {
         q: {
           page: 0
@@ -204,7 +203,7 @@ export default {
         loadEnd: false,
         noData: false
       },
-      activity: {
+      event: {
         q: {
           page: 0
         },
@@ -222,7 +221,8 @@ export default {
     LoadEnd,
     NoData,
     CommitItem,
-    FixedCorner
+    FixedCorner,
+    EventItem
   },
   methods: {
     getTab (data) {
@@ -232,9 +232,6 @@ export default {
       const data = await api.getRepo(owner, repo)
       return data
     },
-    /**
-     * TODO: 考虑一下要不要搞触底加载
-    */
     async getCommits () {
       this.commit.q.page += 1
       const owner = this.repo.owner.login
@@ -242,15 +239,42 @@ export default {
       const q = _query(this.commit.q)
       const data = await api.getCommits(owner, repo, q)
       if (data.length === 0) {
-        this.commit.loadEnd = true
         this.commit.loading = false
         this.commit.q.page -= 1
+        if (this.commit.q.page === 0) {
+          this.commit.noData = true
+        } else {
+          this.commit.loadEnd = true
+        }
         return
+      } else if (data.length < per_page) {
+        this.commit.loading = false
+        this.commit.loadEnd = true
       }
-      let commits = dealCommits(data)
-
-      // this.commits.push(...commits)
+      const commits = dealCommits(data)
       this.commits = this.commits.concat(commits)
+    },
+    async getRepoEvents () {
+      this.event.q.page += 1
+      const owner = this.repo.owner.login
+      const repo = this.repo.name
+      const q = _query(this.event.q)
+      const data = await api.getRepoEvents(owner, repo, q)
+      if (data.length === 0) {
+        this.event.loading = false
+        this.event.q.page -= 1
+        if (this.event.q.page === 0) {
+          this.event.noData = true
+        } else {
+          this.event.loadEnd = true
+        }
+        return
+      } else if (data.length < per_page) {
+        this.event.loading = false
+        this.event.loadEnd = true
+      }
+      const events = dealEvents(data)
+      this.events = this.events.concat(events)
     },
     async isStar (owner, repo) {
       const data = await api.getIsStar(owner, repo)
@@ -299,15 +323,15 @@ export default {
 
       if (!this.commits.length && currentItemId === 'commits') {
         this.getCommits()
-      } else if (!this.activities.length && currentItemId === 'activity') {
-        // this.getEvents()
+      } else if (!this.events.length && currentItemId === 'activity') {
+        this.getRepoEvents()
       }
     },
     scrollToLower () {
       if (this.currentId === 'commits') {
         this.getCommits()
       } else {
-        // this.getUsers()
+        this.getRepoEvents()
       }
     }
   },

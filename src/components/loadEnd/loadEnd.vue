@@ -1,5 +1,5 @@
 <template>
-  <div>____没啦_____</div>
+  <div>____END____</div>
 </template>
 
 <script>

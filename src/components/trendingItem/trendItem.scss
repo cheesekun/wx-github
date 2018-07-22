@@ -22,6 +22,9 @@
     .trending-lang {
       color: $color-font-grey;
       @include text-over();
+      width: 100px;
+      flex: 1;
+      text-align: right;
       .lang-color {
         display: inline-block;
         margin: 0 2px;

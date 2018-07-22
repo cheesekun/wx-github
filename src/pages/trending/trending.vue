@@ -59,10 +59,7 @@
 <script>
 /**
  * FIXME: 那个高1px是什么玩意
- * TODO: 给weekly和monthly添加转场的loading
 */
-// import wx from 'wx'
-// import api from '@/utils/api'
 import Tabs from '@/components/tabs/tabs'
 import Loading from '@/components/loading/loading'
 import TrendingItem from '@/components/trendingItem/trendingItem'

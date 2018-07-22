@@ -11,7 +11,7 @@
         <form class="login-form">
           <input v-model="username" type="text" class="login-input" placeholder="User" />
           <input @confirm="login" v-model="password" type="password" class="login-input" placeholder="Password" />
-          <button type="submit" @click="login" class="login-button">SIGN IN</button>
+          <button :loading=loading type="submit" @click="login" class="login-button">SIGN IN</button>
         </form>
       </section>
       <div @click="toAbout" class="about">
@@ -44,7 +44,8 @@ export default {
       info: {},
       username: '',
       password: '',
-      auth: ''
+      auth: '',
+      loading: false
     }
   },
   components: {
@@ -52,7 +53,18 @@ export default {
   },
   methods: {
     async login () {
+      if (!this.username || !this.password) {
+        wx.showToast({
+          title: '输入不能为空',
+          icon: 'loading',
+          image: '/static/img/error.png',
+          duration: 1200
+        })
+        return
+      }
+      this.loading = true
       const auth = await api.login(this.username, this.password)
+      this.loading = false
       // 如果 auth 为空，也就是说账户密码错误什么的
       if (!auth) {
         return
