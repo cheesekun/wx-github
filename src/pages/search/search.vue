@@ -48,9 +48,6 @@
 </template>
 
 <script>
-  /**
-   * TODO: 一个no data 组件
-  */
   import api from '@/utils/api'
   import Tabs from '@/components/tabs/tabs'
   import RepoItem from '@/components/repoItem/repoItem'
@@ -58,16 +55,13 @@
   import Loading from '@/components/loading/loading'
   import LoadEnd from '@/components/loadEnd/loadEnd'
   import NoData from '@/components/noData/noData'
-  import { _query, dealRepos, dealUsers } from '@/utils/index.js'
+  import { _query, dealRepos, dealUsers } from '@/utils'
+  /* eslint-disable */
+  import { per_page } from '@/utils/config'
   import { mapState } from 'vuex'
   import wx from 'wx'
 
-  /**
-   * 由于 微信 setData 数据量限制，不能一直累加
-   * 所以弄个全局的存放，而不放在 this.data里
-   */
-  // const [repos, users] = [[], []]
-
+  const warnImg = '/static/img/warn.png'
   let q = ''
 
   export default {
@@ -150,7 +144,6 @@
           return
         }
         let repos = dealRepos(data.items)
-        // this.repos.push(...repos)
         this.repos = this.repos.concat(repos)
       },
       async getUsers () {
@@ -171,10 +164,20 @@
        * TODO: 这个函数放了太多逻辑，拆一拆
       */
       search (e) {
+        q = e.mp.detail.value
+        if (q === '') {
+          wx.showToast({
+            title: '搜索不能为空',
+            icon: 'loading',
+            image: warnImg,
+            duration: 1200
+          })
+          return
+        }
         this.showSwiper = true
         // 重置page
         this.reposQuery.page = this.usersQuery.page = 1
-        q = e.mp.detail.value
+
 
         this.setHistorys(q)
 
@@ -204,7 +207,7 @@
 
           if (reposData['total_count'] === 0) {
             this.repo.noData = true
-          } else if (reposData['total_count'] <= 10) {
+          } else if (reposData['total_count'] <= per_page) {
             this.repo.loadEnd = true
           } else {
             this.repo.loading = true
@@ -212,7 +215,7 @@
 
           if (usersData['total_count'] === 0) {
             this.user.noData = true
-          } else if (usersData['total_count'] <= 10) {
+          } else if (usersData['total_count'] <= per_page) {
             this.user.loadEnd = true
           } else {
             this.user.loading = true
@@ -220,8 +223,6 @@
 
           this.repos = repos
           this.users = users
-          // this.repos.push(...repos)
-          // this.users.push(...users)
         })
       },
       getTab (data) {
@@ -258,7 +259,7 @@
       setHistorys (value) {
         if (this.historys.indexOf(value) !== -1) return
         const historys = [value, ...this.historys]
-        if (historys.length > 8) {
+        if (historys.length > 6) {
           historys.pop()
         }
         const historysStr = JSON.stringify(historys)
@@ -285,8 +286,11 @@
       },
       delHistory (value) {
         let index = this.historys.indexOf(value)
-        this.historys.splice(index, 1)
-        const historysStr = JSON.stringify(this.historys)
+        const clone = JSON.parse(JSON.stringify(this.historys))
+        clone.splice(index, 1)
+        this.historys = clone
+
+        const historysStr = JSON.stringify(clone)
         wx.setStorage({
           key: 'historys',
           data: historysStr
