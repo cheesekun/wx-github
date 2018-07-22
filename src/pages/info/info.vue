@@ -15,10 +15,6 @@ import { mapState } from 'vuex'
 // import wx from 'wx'
 
 export default {
-  /**
-   * FIXME: 在点击后退键时，路由问题，mpvue大bug卧槽
-   * FIXME: 还是有bug，感觉还是数据清理的问题
-   */
   async onShow () {
     this.info = {}
     const options = getQuery()

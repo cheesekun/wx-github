@@ -1,0 +1,70 @@
+@import 'styles/variable.scss';
+@import 'styles/mixin.scss';
+
+.event-item {
+  display: flex;
+  padding: 8px;
+  line-height: 2.2;
+  margin-bottom: 5px;
+  @include bg-shadow();
+
+  .event-avatar {
+    min-height: 50px;
+    min-width: 50px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  .event {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    flex: 1;
+    .event-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      .event-name {
+        color: $color-font-blue;
+        @include text-over();
+        font-weight: bold;
+        width: 180px;
+      }
+      .event-date {
+        color: $color-font-grey;
+      }
+    }
+    .event-desc {
+      font-size: 14px;
+      padding-bottom: 5px;
+      line-height: 1.2;
+      // @include text-over-multiple(4);
+      word-wrap: break-word;
+      word-break: break-all;
+      .title {
+        color: #000;
+        font-size: 16px;
+        padding-bottom: 8px;
+      }
+      .small {
+        display: flex;
+        flex-direction: column;
+        .sha {
+          color: $color-font-blue;
+          padding-right: 5px;
+          text-align: left;
+        }
+        .msg {
+          @include text-over;
+          text-align: right;
+        }
+      }
+      .strong {
+        color: #000;
+        font-weight: bold;
+      }
+    }
+  }
+}
