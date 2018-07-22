@@ -63,6 +63,9 @@
           <div class="event-item" v-for="(item, index) in events" :key="index">
             <event-item :event="item"></event-item>
           </div>
+          <Loading v-if="event.loading"/>
+          <load-end v-else-if="event.loadEnd" />
+          <no-data v-else-if="event.noData" />
         </scroll-view>
       </swiper-item>
       <swiper-item item-id="starred">
@@ -87,8 +90,6 @@
 
 <script>
 /**
- * FIXME: 不应该通过判断starreds 来确定有没有加载star数据，因为可能本来就是空，弄个字段标识空，就不用反复请求了
- * TODO: 添加loading/loadEnd/noData，还有初始转场的loading。
  * TODO: Gist 页面
  */
 import api from '@/utils/api'
@@ -100,8 +101,9 @@ import NoData from '@/components/noData/noData'
 import FixedCorner from '@/components/fixedCorner/fixedCorner'
 import EventItem from '@/components/eventItem/eventItem'
 import { mapState } from 'vuex'
-import {_query, dealRepos, dealEvents} from '@/utils/index'
-import {FOLLOW_SUCCESS, FOLLOW_FAIL, DELETE_FOLLOW_SUCCESS, DELETE_FOLLOW_FAIL} from '@/utils/config'
+import {_query, dealRepos, dealEvents} from '@/utils'
+/* eslint-disable */
+import {per_page, FOLLOW_SUCCESS, FOLLOW_FAIL, DELETE_FOLLOW_SUCCESS, DELETE_FOLLOW_FAIL} from '@/utils/config'
 import wx from 'wx'
 
 export default {
@@ -127,20 +129,14 @@ export default {
     }
   },
   onHide () {
-    // console.log(11)
   },
   onLoad () {
-    // console.log(22)
     this.starreds = []
     this.events = []
     this.currentId = 'info'
     this.currentIndex = 0
   },
   onUnload () {
-    // FIXME: 感觉要重构
-    // this.currentId = 'starred'
-    // this.currentIndex = 2
-    // console.log(33)
     this.starred.q.page = 0
     this.event.q.page = 0
   },
@@ -206,14 +202,31 @@ export default {
       this.currentId = data.id
     },
     async getUserEvents () {
+      this.event.q.page += 1
+      const q = _query(this.event.q)
       let user = this.info.login
-      const data = await api.getUserEvents(user)
-      this.events = dealEvents(data)
-      // return data
+      let data = null
+      if (this.isMe) {
+        data = await api.getMyEvents(user, q)
+      } else {
+        data = await api.getUserEvents(user, q)
+      }
+      if (data.length === 0) {
+        this.event.loading = false
+        this.event.q.page -= 1
+        if (this.event.q.page === 0) {
+          this.event.noData = true
+        } else {
+          this.event.loadEnd = true
+        }
+        return
+      } else if (data.length < per_page) {
+        this.event.loading = false
+        this.event.loadEnd = true
+      }
+      let events = dealEvents(data)
+      this.events = this.events.concat(events)
     },
-    /**
-     * TODO: 考虑一下要不要搞触底加载
-    */
     async getStarred () {
       this.starred.q.page += 1
       let user = this.info.login
@@ -228,6 +241,9 @@ export default {
           this.starred.loadEnd = true
         }
         return
+      } else if (data.length < per_page) {
+        this.starred.loading = false
+        this.starred.loadEnd = true
       }
       let starreds = dealRepos(data)
       this.starreds = this.starreds.concat(starreds)
@@ -273,10 +289,7 @@ export default {
       if (this.currentId === 'starred') {
         this.getStarred()
       } else {
-        /**
-         * TODO: event 上滑加载
-         */
-        // this.getUsers()
+        this.getUserEvents()
       }
     },
     toFollowers (user) {
@@ -297,7 +310,7 @@ export default {
     toGists (user) {
       wx.showToast({
         title: '施工中...',
-        icon: 'success',
+        icon: 'loading',
         duration: 1500
       })
       // wx.navigateTo({
