@@ -1,7 +1,7 @@
 <template>
   <div class="info-container">
-    <User v-if="info.type === 'User'" :info="info" :followContent="followContent" />
-    <Org v-if="info.type === 'Organization'" :info="info" />
+    <User v-if="info.type === 'User'" :info="info" :loading="!loading" :followContent="followContent" />
+    <Org v-if="info.type === 'Organization'" :info="info" :loading="!loading" />
   </div>
 </template>
 
@@ -11,30 +11,51 @@ import User from '@/components/user/user'
 import Org from '@/components/org/org'
 import { getQuery, dealUser } from '@/utils'
 import {FOLLOWED, UNFOLLOW} from '@/utils/config'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 // import wx from 'wx'
 
 export default {
-  async onShow () {
-    this.info = {}
+  async onLoad () {
     const options = getQuery()
+    const user = options.login
+
+    // vuex
+    this.userStack.push(options)
+    this.info = await this.getInfo(user)
+
+    if (this.isLogin && this.info.type === 'User') {
+      this.isFollow(this.info.login)
+    }
+  },
+  async onShow () {
+    const options = getQuery()
+    // vuex
+    let userStack = JSON.parse(JSON.stringify(this.userStack))
+    let len = userStack.length
+    let endStack = userStack[len - 1]
+
+    if (JSON.stringify(endStack) === JSON.stringify(options)) {
+      return
+    }
+
     const user = options.login
     this.info = await this.getInfo(user)
     if (this.isLogin && this.info.type === 'User') {
-      await this.isFollow(this.info.login)
+      this.isFollow(this.info.login)
     }
   },
-  /**
-   * mpvue 的声明周期没有监听页面卸载
-   * 只能利用小程序自带的生命周期了
-   */
   onHide () {
     // this.info = {}
+  },
+  onUnload () {
+    // vuex
+    this.userStack.slice(0, -1)
   },
   data () {
     return {
       info: {},
-      followContent: ''
+      followContent: '',
+      loading: true
     }
   },
   components: {
@@ -43,7 +64,10 @@ export default {
   },
   methods: {
     async getInfo (user) {
+      this.loading = true
+      // TODO: 把默认给拆出来
       const info = dealUser(await api.getInfo(user))
+      this.loading = false
       return info
     },
     async isFollow (user) {
@@ -53,11 +77,15 @@ export default {
       } else if (data.status === UNFOLLOW) {
         this.followContent = 'FOLLOW'
       }
-    }
+    },
+    ...mapMutations([
+      'setUserStack'
+    ])
   },
   computed: {
     ...mapState([
-      'isLogin'
+      'isLogin',
+      'userStack'
     ])
   }
 }

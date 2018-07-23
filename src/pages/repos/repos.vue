@@ -18,22 +18,35 @@ import RepoItem from '@/components/repoItem/repoItem'
 import Loading from '@/components/loading/loading'
 import LoadEnd from '@/components/loadEnd/loadEnd'
 import NoData from '@/components/noData/noData'
+import { mapState, mapMutations } from 'vuex'
 
 let user = ''
 export default {
-  onShow () {
-    this.repos = []
-    this.repo = {
-      q: {
-        page: 0
-      },
-      loading: true,
-      loadEnd: false,
-      noData: false
-    }
+  onLoad () {
+    this.reset()
     const options = getQuery()
     user = options.login
+    // vuex
+    this.reposStack.push(options)
+
     this.getRepos()
+  },
+  onShow () {
+    const options = getQuery()
+    // vuex
+    let reposStack = JSON.parse(JSON.stringify(this.reposStack))
+    let len = reposStack.length
+    let endStack = reposStack[len - 1]
+    if (JSON.stringify(endStack) === JSON.stringify(options)) {
+      return
+    }
+    this.reset()
+    user = options.login
+    this.getRepos()
+  },
+  onUnload () {
+    // vuex
+    this.reposStack.slice(0, -1)
   },
   onReachBottom () {
     this.getRepos()
@@ -58,6 +71,17 @@ export default {
     }
   },
   methods: {
+    reset () {
+      this.repos = []
+      this.repo = {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      }
+    },
     async getRepos () {
       this.repo.q.page += 1
       const q = _query(this.repo.q)
@@ -78,9 +102,16 @@ export default {
       }
       const repos = dealRepos(data)
       this.repos = this.repos.concat(repos)
-    }
+    },
+    ...mapMutations([
+      'setReposStack'
+    ])
+  },
+  computed: {
+    ...mapState([
+      'reposStack'
+    ])
   }
-
 }
 </script>
 

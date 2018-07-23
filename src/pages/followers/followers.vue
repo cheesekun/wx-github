@@ -18,22 +18,35 @@ import UserItem from '@/components/userItem/userItem'
 import Loading from '@/components/loading/loading'
 import LoadEnd from '@/components/loadEnd/loadEnd'
 import NoData from '@/components/noData/noData'
+import { mapState, mapMutations } from 'vuex'
 
 let user = ''
 export default {
-  onShow () {
-    this.followers = []
-    this.follower = {
-      q: {
-        page: 0
-      },
-      loading: true,
-      loadEnd: false,
-      noData: false
-    }
+  onLoad () {
+    this.reset()
     const options = getQuery()
     user = options.login
+    // vuex
+    this.followersStack.push(options)
+
     this.getFollowers()
+  },
+  onShow () {
+    const options = getQuery()
+    // vuex
+    let followersStack = JSON.parse(JSON.stringify(this.followersStack))
+    let len = followersStack.length
+    let endStack = followersStack[len - 1]
+    if (JSON.stringify(endStack) === JSON.stringify(options)) {
+      return
+    }
+    this.reset()
+    user = options.login
+    this.getFollowers()
+  },
+  onUnload () {
+    // vuex
+    this.followersStack.slice(0, -1)
   },
   onReachBottom () {
     this.getFollowers()
@@ -58,6 +71,17 @@ export default {
     }
   },
   methods: {
+    reset () {
+      this.followers = []
+      this.follower = {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      }
+    },
     async getFollowers () {
       this.follower.q.page += 1
       const q = _query(this.follower.q)
@@ -78,9 +102,16 @@ export default {
       }
       const followers = dealUsers(data)
       this.followers = this.followers.concat(followers)
-    }
+    },
+    ...mapMutations([
+      'setFollowersStack'
+    ])
+  },
+  computed: {
+    ...mapState([
+      'followersStack'
+    ])
   }
-
 }
 </script>
 

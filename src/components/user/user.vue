@@ -18,7 +18,8 @@
     <div id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
-    <swiper @change="pageChange" :style="{height: height + 'px'}" class="list" :current-item-id="currentId" duration="200">
+    <Loading v-if="!loading" />
+    <swiper v-if="loading" @change="pageChange" :style="{height: height + 'px'}" class="list" :current-item-id="currentId" duration="200">
       <swiper-item item-id="info">
         <div class="info-p">
           <div class="follow-area">
@@ -148,6 +149,10 @@ export default {
     followContent: {
       type: String,
       default: 'FOLLOW'
+    },
+    loading: {
+      type: Boolean,
+      default: true
     }
   },
   data () {

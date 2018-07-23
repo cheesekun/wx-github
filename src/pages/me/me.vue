@@ -1,7 +1,7 @@
 <template>
   <div class="me-container">
     <!-- <Info :info="info" /> -->
-    <User :info="info" v-if="auth" />
+    <User :info="info" :login="infoLogin" v-if="auth" />
     <div class="login-container" v-else>
       <section class="login" id="login">
         <header>
@@ -11,7 +11,7 @@
         <form class="login-form">
           <input v-model="username" type="text" class="login-input" placeholder="User" />
           <input @confirm="login" v-model="password" type="password" class="login-input" placeholder="Password" />
-          <button :loading=loading type="submit" @click="login" class="login-button">SIGN IN</button>
+          <button :loading=loginLoading type="submit" @click="login" class="login-button">SIGN IN</button>
         </form>
       </section>
       <div @click="toAbout" class="about">
@@ -45,7 +45,8 @@ export default {
       username: '',
       password: '',
       auth: '',
-      loading: false
+      loginLoading: false,
+      infoLogin: false
     }
   },
   components: {
@@ -62,9 +63,9 @@ export default {
         })
         return
       }
-      this.loading = true
+      this.loginLoading = true
       const auth = await api.login(this.username, this.password)
-      this.loading = false
+      this.loginLoading = false
       // 如果 auth 为空，也就是说账户密码错误什么的
       if (!auth) {
         return
@@ -77,7 +78,9 @@ export default {
       this.info = me
     },
     async getMe () {
+      this.infoLogin = true
       const info = dealUser(await api.getMe())
+      this.infoLogin = false
       return info
     },
     /**
