@@ -8,10 +8,8 @@
 
 .top {
   position: relative;
-  // background: $color-theme;
   background-repeat: no-repeat;
   background-position: center;
-  /* background-size: contain; */
   background-size: cover;
   color: #fff;
   height: 100px;
@@ -36,6 +34,7 @@
     font-size: 14px;
     .name {
       font-size: 20px;
+      @include text-over();
     }
     .desc {
       @include text-over-multiple(2);
@@ -58,7 +57,6 @@
 .list {
   box-sizing: border-box;
   padding: 5px 8px 0;
-  // height: 385px;
   .info-p {
     padding: 10px;
     display: flex;
@@ -72,6 +70,9 @@
       font-size: 18px;
       .name {
         color: $color-font-blue;
+      }
+      .repo-name {
+        @include text-over();
       }
     }
     .time {
@@ -99,8 +100,4 @@
       color: $color-font-blue;
     }
   }
-}
-
-.commit-item {
-
 }

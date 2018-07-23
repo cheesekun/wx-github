@@ -25,7 +25,7 @@
           <div class="info-p">
             <div class="name-wrapper">
               <p @click="toUser(repo.owner.login)" class="name">{{repo.owner.login}}</p>
-              <p>/{{repo.name}}</p>
+              <p class="repo-name">/{{repo.name}}</p>
             </div>
             <p class="time">Created at {{repo['created_at']}}，Lastest commit {{repo['pushed_at']}}</p>
             <div class="info-b">
@@ -100,12 +100,12 @@ import EventItem from '@/components/eventItem/eventItem'
 /* eslint-disable */
 import {per_page, STARRED, UNSTAR, STAR_SUCCESS, STAR_FAIL, DELETE_STAR_SUCCESS, DELETE_STAR_FAIL} from '@/utils/config'
 import { _query, getQuery, dealRepo, dealCommits, dealEvents } from '@/utils'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import marked from 'marked'
 import { Base64 } from 'js-base64'
 
 export default {
-  onLoad () {
+  async onLoad () {
     wx.getSystemInfo({
       success: (res) => {
         this.height = res.windowHeight
@@ -122,59 +122,35 @@ export default {
 
       this.height = this.height - topH - tabsH + 'px'
     })
-    /**
-     * FIXME: 为什么清空readme就会炸呢
-    */
-    this.commits = []
-    this.events = []
-    this.currentId = 'info'
-    this.currentIndex = 0
-  },
-
-  async onShow () {
-    this.loading = true
-    this.commit = {
-      q: {
-        page: 0
-      },
-      loading: true,
-      loadEnd: false,
-      noData: false
-    }
-    this.event = {
-      q: {
-        page: 0
-      },
-      loading: true,
-      loadEnd: false,
-      noData: false
-    }
 
     const options = getQuery()
     const {owner, repo} = options
 
-    let getRepo = api.getRepo(owner, repo)
-    let getReadme = api.getReadme(owner, repo)
+    // vuex
+    this.repoStack.push(options)
+    this.getRepoAndReadme(owner, repo)
+  },
 
-    /**
-     * FIXME: readme请求太慢了，拆开来
-    */
-    Promise.all([getReadme, getRepo]).then(datas => {
-      this.loading = false
-      this.repo = dealRepo(datas[1])
-      if (this.isLogin) {
-        this.isStar(this.repo.owner.login, this.repo.name)
-      }
-      if (datas[0].isExist === false) {
-        this.readme = '此仓库无README.'
-      } else {
-        let readme = Base64.decode(datas[0].file.content)
-        this.readme = marked(readme)
-      }
-    })
+  async onShow () {
+    const options = getQuery()
+    // vuex
+    let repoStack = JSON.parse(JSON.stringify(this.repoStack))
+    let len = repoStack.length
+    let endStack = repoStack[len - 1]
+    if (JSON.stringify(endStack) === JSON.stringify(options)) {
+      return
+    }
+
+    const {owner, repo} = options
+    this.getRepoAndReadme(owner, repo)
   },
 
   onHide () {
+  },
+  onUnload () {
+    // 哇，引用类型牛逼
+    // vuex
+    this.repoStack.slice(0, -1)
   },
   data () {
     return {
@@ -225,12 +201,53 @@ export default {
     EventItem
   },
   methods: {
+    reset () {
+      this.commits = []
+      this.events = []
+      this.currentId = 'info'
+      this.currentIndex = 0
+      this.loading = true
+      this.commit = {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      }
+      this.event = {
+        q: {
+          page: 0
+        },
+        loading: true,
+        loadEnd: false,
+        noData: false
+      }
+    },
     getTab (data) {
       this.currentId = data.id
     },
-    async getRepo (owner, repo) {
-      const data = await api.getRepo(owner, repo)
-      return data
+    async getRepoAndReadme (owner, repo) {
+      this.reset()
+      let getRepo = api.getRepo(owner, repo)
+      let getReadme = api.getReadme(owner, repo)
+
+      /**
+       * FIXME: readme请求太慢了，拆开来
+      */
+      Promise.all([getReadme, getRepo]).then(datas => {
+        this.loading = false
+        this.repo = dealRepo(datas[1])
+        if (this.isLogin) {
+          this.isStar(this.repo.owner.login, this.repo.name)
+        }
+        if (datas[0].isExist === false) {
+          this.readme = '此仓库无README.'
+        } else {
+          let readme = Base64.decode(datas[0].file.content)
+          this.readme = marked(readme)
+        }
+      })
     },
     async getCommits () {
       this.commit.q.page += 1
@@ -333,11 +350,15 @@ export default {
       } else {
         this.getRepoEvents()
       }
-    }
+    },
+    ...mapMutations([
+      'setRepoStack'
+    ])
   },
   computed: {
     ...mapState([
-      'isLogin'
+      'isLogin',
+      'repoStack'
     ])
   }
 }
