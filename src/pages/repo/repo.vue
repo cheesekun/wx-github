@@ -364,7 +364,7 @@ export default {
 }
 </script>
 
-<style lang='scss'>
+<style scoped lang='scss'>
   @import './repo.scss';
   @import './wxParse.scss';
 </style>

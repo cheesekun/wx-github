@@ -9,6 +9,10 @@
  * detail : http://weappdev.com/t/wxparse-alpha0-1-html-markdown/184
  */
 
+ .wxparser--wxParser-code {
+  display: inline;
+}
+
 .wxParse {
   width: 100%;
   font-family: Helvetica, sans-serif;
@@ -85,6 +89,7 @@
 .wxParse .kbd,
 .wxParse .samp {
   font-family: monospace;
+  display: inline;
 }
 .wxParse .pre {
   overflow: auto;
