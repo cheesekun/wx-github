@@ -1,27 +1,6 @@
-/* eslint-disable */
-import {per_page} from '@/utils/config'
+import {per_page} from '@/utils/config' // eslint-disable-line
 import colors from './colors'
 import moment from 'moment'
-
-export function formatNumber (n) {
-  const str = n.toString()
-  return str[1] ? str : `0${str}`
-}
-
-export function formatTime (date) {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-
-  const hour = date.getHours()
-  const minute = date.getMinutes()
-  const second = date.getSeconds()
-
-  const t1 = [year, month, day].map(formatNumber).join('/')
-  const t2 = [hour, minute, second].map(formatNumber).join(':')
-
-  return `${t1} ${t2}`
-}
 
 /**
  * query数据封装
@@ -100,7 +79,7 @@ export function dealUser (data) {
     public_gists: data['public_gists'],
     followers: data.followers,
     following: data.following,
-    created_at: moment(data['created_at']).format('ll'),
+    created_at: moment(data['created_at']).format('ll')
   }
 }
 
@@ -130,7 +109,7 @@ export function dealRepo (data) {
     forks_count: data['forks_count'],
     open_issues_count: data['open_issues_count'],
     subscribers_count: data['subscribers_count'],
-    language: data['language'],
+    language: data['language']
   }
   return repo
 }
@@ -164,7 +143,7 @@ export function dealCommits (data) {
   let commits = []
   commits = data.map(item => {
     return {
-      sha: item.sha.slice(0,7),
+      sha: item.sha.slice(0, 7),
       author: {
         login: item.author.login,
         avatar_url: item.author['avatar_url']
@@ -182,14 +161,14 @@ export function dealCommits (data) {
 /**
  * events 数据处理
 */
-function firstUpperCase(str) {
-  return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
+function firstUpperCase (str) {
+  return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
 }
 function getPushCommits (commits) {
   return commits.map(item => {
     return {
       message: item.message,
-      sha: item.sha.slice(0,7)
+      sha: item.sha.slice(0, 7)
     }
   })
 }

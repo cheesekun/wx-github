@@ -7,7 +7,13 @@ const store = new Vuex.Store({
   state: {
     isLogin: false,
     user: '',
-    tabsH: ''
+    tabsH: '',
+    repoStack: [],
+    userStack: [],
+    followersStack: [],
+    followingStack: [],
+    membersStack: [],
+    reposStack: []
   },
   mutations: {
     setUser (state, user) {
@@ -18,6 +24,24 @@ const store = new Vuex.Store({
     },
     assignTabsH (state, height) {
       state.tabsH = height
+    },
+    setRepoStack (state, repoStack) {
+      state.repoStack = repoStack
+    },
+    setUserStack (state, userStack) {
+      state.userStack = userStack
+    },
+    setFollowersStack (state, followersStack) {
+      state.followersStack = followersStack
+    },
+    setFollowingStack (state, followingStack) {
+      state.followingStack = followingStack
+    },
+    setMembersStack (state, membersStack) {
+      state.membersStack = membersStack
+    },
+    setReposStack (state, reposStack) {
+      state.reposStack = reposStack
     }
   }
 })

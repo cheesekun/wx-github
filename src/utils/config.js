@@ -1,8 +1,7 @@
-/* eslint-disable */
-
 /**
  * 默认请求个数
  */
+// eslint-disable-next-line
 export const per_page = 10
 
 export const REQ_OK = 1000
