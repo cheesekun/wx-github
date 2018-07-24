@@ -8,7 +8,7 @@
 
 ![](http://pc9p4qsb2.bkt.clouddn.com/wx-github.jpg)
 
-> UI参考[OpenH](https://github.com/ThirtyDegreesRay/OpenHub)
+> UI参考[OpenHub](https://github.com/ThirtyDegreesRay/OpenHub)
 
 ## 截图预览、
 
