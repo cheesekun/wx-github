@@ -4,11 +4,11 @@
 
 
 
-## 扫码体验（审核中）、
+## 扫码体验、
 
 ![](http://pc9p4qsb2.bkt.clouddn.com/wx-github.jpg)
 
-
+> UI参考[OpenH](https://github.com/ThirtyDegreesRay/OpenHub)
 
 ## 截图预览、
 
@@ -27,7 +27,6 @@
 ### USER
 
 ![](http://pc9p4qsb2.bkt.clouddn.com/me_gaitubao_com_339x603.jpg)
-
 
 
 
