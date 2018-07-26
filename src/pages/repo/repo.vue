@@ -12,7 +12,7 @@
         <fixed-corner :content="starContent"></fixed-corner>
       </div>
     </div>
-    <div id="tabs" class="tabs">
+    <div v-if="!loading" id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
     <Loading v-if="loading" />
@@ -29,19 +29,19 @@
             </div>
             <p class="time">Created at {{repo['created_at']}}，Lastest commit {{repo['pushed_at']}}</p>
             <div class="info-b">
-              <div>
+              <div @click="toIssues(repo.owner.login, repo.name)">
                 <p class="b-num">{{repo['open_issues_count']}}</p>
                 <p>issues</p>
               </div>
-              <div>
+              <div @click="toStargazers(repo.owner.login, repo.name)">
                 <p class="b-num">{{repo['stargazers_count']}}</p>
                 <p>Stargazers</p>
               </div>
-              <div>
+              <div @click="toForks(repo.owner.login, repo.name)">
                 <p class="b-num">{{repo['forks_count']}}</p>
                 <p>Forks</p>
               </div>
-              <div>
+              <div @click="toSubscribers(repo.owner.login, repo.name)">
                 <p class="b-num">{{repo['subscribers_count']}}</p>
                 <p>Watchers</p>
               </div>
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+import api from '@/http/api'
 import Tabs from '@/components/tabs/tabs'
 import Loading from '@/components/loading/loading'
 import LoadEnd from '@/components/loadEnd/loadEnd'
@@ -331,6 +331,28 @@ export default {
     toUser (user) {
       wx.navigateTo({
         url: `/pages/info/info?login=${user}`
+      })
+    },
+    toIssues (owner, repo) {
+      wx.showToast({
+        title: '施工中...',
+        icon: 'loading',
+        duration: 1500
+      })
+    },
+    toStargazers (owner, repo) {
+      wx.navigateTo({
+        url: `/pages/stargazers/stargazers?login=${owner}&repo=${repo}`
+      })
+    },
+    toForks (owner, repo) {
+      wx.navigateTo({
+        url: `/pages/forks/forks?login=${owner}&repo=${repo}`
+      })
+    },
+    toSubscribers (owner, repo) {
+      wx.navigateTo({
+        url: `/pages/subscribers/subscribers?login=${owner}&repo=${repo}`
       })
     },
     pageChange (e) {

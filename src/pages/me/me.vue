@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+import api from '@/http/api'
 import User from '@/components/user/user'
 import { dealUser } from '@/utils'
 import { mapMutations } from 'vuex'
@@ -38,6 +38,13 @@ export default {
   },
   onLoad () {
 
+  },
+  async onPullDownRefresh () {
+    if (this.auth) {
+      const me = await this.getMe()
+      this.info = me
+      wx.stopPullDownRefresh()
+    }
   },
   data () {
     return {
