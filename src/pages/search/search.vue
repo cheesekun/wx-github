@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+import api from '@/http/api'
 import Tabs from '@/components/tabs/tabs'
 import RepoItem from '@/components/repoItem/repoItem'
 import UserItem from '@/components/userItem/userItem'

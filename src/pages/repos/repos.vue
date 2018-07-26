@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+import api from '@/http/api'
 /* eslint-disable */
 import { per_page } from '@/utils/config'
 import { _query, getQuery, dealRepos } from '@/utils'

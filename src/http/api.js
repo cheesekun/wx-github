@@ -40,7 +40,10 @@ const api = {
   getOwnRepos: (user, q) => request.get(`/users/${user}/repos`, q),
   getMembers: (org, q) => request.get(`/orgs/${org}/members`, q),
   getReadme: (owner, repo) => request.get(`/repos/${owner}/${repo}/contents/README.md`),
-  getCommits: (owner, repo, q) => request.get(`/repos/${owner}/${repo}/commits`, q)
+  getCommits: (owner, repo, q) => request.get(`/repos/${owner}/${repo}/commits`, q),
+  getStargazers: (owner, repo, q) => request.get(`/repos/${owner}/${repo}/stargazers`, q),
+  getForks: (owner, repo, q) => request.get(`/repos/${owner}/${repo}/forks`, q),
+  getSubscribers: (owner, repo, q) => request.get(`/repos/${owner}/${repo}/subscribers`, q)
 }
 
 export default api

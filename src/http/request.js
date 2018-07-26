@@ -7,7 +7,8 @@ const errorImg = '../../static/img/error.png'
 const request = new Fly()
 
 request.config = {
-  baseURL: 'https://api.github.com'
+  // baseURL: 'https://api.github.com',
+  baseURL: 'https://github.konsonx.com'
 }
 
 function getAuth () {

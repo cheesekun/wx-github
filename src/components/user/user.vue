@@ -15,7 +15,7 @@
         <fixed-corner :content="followContent"></fixed-corner>
       </div>
     </div>
-    <div id="tabs" class="tabs">
+    <div v-if="loading" id="tabs" class="tabs">
       <Tabs @getTab="getTab" :tabs="tabs" :index="currentIndex" />
     </div>
     <Loading v-if="!loading" />
@@ -93,7 +93,7 @@
 /**
  * TODO: Gist 页面
  */
-import api from '@/utils/api'
+import api from '@/http/api'
 import Tabs from '@/components/tabs/tabs'
 import RepoItem from '@/components/repoItem/repoItem'
 import Loading from '@/components/loading/loading'
@@ -339,5 +339,4 @@ export default {
 
 <style scoped lang="scss">
   @import './user.scss';
-
 </style>

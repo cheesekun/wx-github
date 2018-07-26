@@ -63,7 +63,7 @@
 import Tabs from '@/components/tabs/tabs'
 import Loading from '@/components/loading/loading'
 import TrendingItem from '@/components/trendingItem/trendingItem'
-import api from '@/utils/api'
+import api from '@/http/api'
 import { dealTrending } from '@/utils'
 import { mapMutations } from 'vuex'
 

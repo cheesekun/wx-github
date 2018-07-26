@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import api from '@/utils/api'
+import api from '@/http/api'
 import User from '@/components/user/user'
 import Org from '@/components/org/org'
 import { getQuery, dealUser } from '@/utils'
