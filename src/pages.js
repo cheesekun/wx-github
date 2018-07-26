@@ -19,7 +19,7 @@ module.exports = [
     path: '/pages/me/me',
     name: 'me',
     config: {
-      enablePullDownRefresh: false,
+      enablePullDownRefresh: true,
       navigationBarTitleText: 'Me'
     }
   },
@@ -78,6 +78,27 @@ module.exports = [
     config: {
       enablePullDownRefresh: false,
       navigationBarTitleText: 'Repositories'
+    }
+  }, {
+    path: '/pages/stargazers/stargazers',
+    name: 'stargazers',
+    config: {
+      enablePullDownRefresh: false,
+      navigationBarTitleText: 'Stargazers'
+    }
+  }, {
+    path: '/pages/forks/forks',
+    name: 'forks',
+    config: {
+      enablePullDownRefresh: false,
+      navigationBarTitleText: 'Forks'
+    }
+  }, {
+    path: '/pages/subscribers/subscribers',
+    name: 'subscribers',
+    config: {
+      enablePullDownRefresh: false,
+      navigationBarTitleText: 'Subscribers'
     }
   }
 ]

@@ -13,7 +13,10 @@ const store = new Vuex.Store({
     followersStack: [],
     followingStack: [],
     membersStack: [],
-    reposStack: []
+    reposStack: [],
+    stargazersStack: [],
+    forksStack: [],
+    subscribersStack: []
   },
   mutations: {
     setUser (state, user) {
@@ -42,6 +45,15 @@ const store = new Vuex.Store({
     },
     setReposStack (state, reposStack) {
       state.reposStack = reposStack
+    },
+    setStargazersStack (state, stargazersStack) {
+      state.stargazersStack = stargazersStack
+    },
+    setForksStack (state, forksStack) {
+      state.forksStack = forksStack
+    },
+    setSubscribersStack (state, subscribersStack) {
+      state.subscribersStack = subscribersStack
     }
   }
 })

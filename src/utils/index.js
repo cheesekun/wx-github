@@ -63,6 +63,20 @@ export function dealUsers (data) {
 }
 
 /**
+ * forks 里的 users 数据处理
+ */
+export function dealForks (data) {
+  let users = []
+  users = data.map(item => {
+    return {
+      avatar_url: item.owner['avatar_url'],
+      login: item.owner['login']
+    }
+  })
+  return users
+}
+
+/**
  * user 数据处理
 */
 export function dealUser (data) {
@@ -236,6 +250,17 @@ function dealEventType (type, payload) {
         pages: {
           action: firstUpperCase(payload.pages[0].action),
           page_name: payload.pages[0]['page_name']
+        }
+      }
+      break
+    case 'PublicEvent':
+      obj = {}
+      break
+    case 'MemberEvent':
+      obj = {
+        action: firstUpperCase(payload.pages[0].action),
+        member: {
+          login: payload.member.login
         }
       }
       break

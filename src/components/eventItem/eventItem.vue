@@ -43,6 +43,12 @@
       <div v-if="event.type === 'GollumEvent'" class="event-desc">
         <p class="title">{{event.payload.pages.action}} a wiki named {{event.payload.pages['page_name']}} on <span class="strong">{{event.repo.name}}</span></p>
       </div>
+      <div v-if="event.type === 'PublicEvent'" class="event-desc">
+        <p class="title">Made <span class="strong">{{event.repo.name}}</span> public</p>
+      </div>
+      <div v-if="event.type === 'MemberEvent'" class="event-desc">
+        <p class="title">{{event.payload.action}} member <span class="strong">{{event.payload.member.login}}</span> in <span class="strong">{{event.repo.name}}</span></p>
+      </div>
     </div>
   </div>
 </template>
