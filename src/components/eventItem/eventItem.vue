@@ -20,7 +20,7 @@
       </div>
       <div v-if="event.type === 'CreateEvent'" class="event-desc">
         <p v-if="!event.payload.ref" class="title">Create <span class="strong">{{event.repo.name}}</span></p>
-        <p v-else class="title">Create <span class="strong">{{event.payload['ref_type']}}</span> at <span class="stronger">{{event.repo.name}}</span></p>
+        <p v-else class="title">Create {{event.payload['ref_type']}} {{event.payload.ref}} at <span class="strong">{{event.repo.name}}</span></p>
       </div>
       <div v-if="event.type === 'PullRequestEvent'" class="event-desc">
         <p class="title">{{event.payload.action}} pull request <span class="strong">{{event.repo.name}}</span></p>

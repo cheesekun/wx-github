@@ -37,4 +37,10 @@ export default {
   -webkit-transition: width 2s;
   -o-transition: width 2s;
 }
+page {
+  background-color: #eee;
+}
+.wxparser--wxParser-code {
+  display: inline;
+}
 </style>
