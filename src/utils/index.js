@@ -1,4 +1,4 @@
-import {per_page} from '@/utils/config' // eslint-disable-line
+import {defaultAvatar, per_page} from '@/utils/config' // eslint-disable-line
 import colors from './colors'
 import moment from 'moment'
 
@@ -159,8 +159,8 @@ export function dealCommits (data) {
     return {
       sha: item.sha.slice(0, 7),
       author: {
-        login: item.author.login,
-        avatar_url: item.author['avatar_url']
+        login: item.author ? item.author.login : item.commit.author.name,
+        avatar_url: item.author ? item.author['avatar_url'] : defaultAvatar
       },
       commit: {
         message: item.commit.message,

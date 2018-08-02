@@ -16,3 +16,5 @@ export const [STARRED, UNSTAR, STAR_SUCCESS, STAR_FAIL,
 
 export const [FOLLOWED, UNFOLLOW, FOLLOW_SUCCESS, FOLLOW_FAIL,
   DELETE_FOLLOW_SUCCESS, DELETE_FOLLOW_FAIL] = [1301, 1302, 1303, 1304, 1305, 1306]
+
+export const defaultAvatar = 'http://pc9p4qsb2.bkt.clouddn.com/default-avatar.jpg'
