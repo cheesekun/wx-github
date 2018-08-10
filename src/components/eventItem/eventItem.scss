@@ -38,9 +38,7 @@
     }
     .event-desc {
       font-size: 14px;
-      padding-bottom: 5px;
       line-height: 1.2;
-      // @include text-over-multiple(4);
       word-wrap: break-word;
       word-break: break-all;
       .title {
@@ -51,13 +49,17 @@
       .small {
         display: flex;
         flex-direction: column;
+        p {
+          margin-bottom: 6px;
+        }
         .sha {
           color: $color-font-blue;
           padding-right: 5px;
           text-align: left;
         }
         .msg {
-          @include text-over;
+          // flex: 1;
+          // @include text-over;
           text-align: right;
         }
       }

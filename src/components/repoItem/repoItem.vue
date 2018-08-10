@@ -10,7 +10,7 @@
       <div class="bottom">
         <p class="icon-star"> {{repo['stargazers_count']}}</p>
         <p class="icon-flow-branch"> {{repo['forks_count']}}</p>
-        <p class="icon-user"> {{repo.owner.login}}</p>
+        <p class="icon-user user"> {{repo.owner.login}}</p>
       </div>
     </div>
   </div>
