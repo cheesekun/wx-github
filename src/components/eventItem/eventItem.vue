@@ -49,6 +49,9 @@
       <div v-if="event.type === 'MemberEvent'" class="event-desc">
         <p class="title">{{event.payload.action}} member <span class="strong">{{event.payload.member.login}}</span> in <span class="strong">{{event.repo.name}}</span></p>
       </div>
+      <div v-if="event.type === 'ReleaseEvent'" class="event-desc">
+        <p class="title">{{event.payload.action}} a release {{event.payload.release['tag_name']}} on <span class="strong">{{event.repo.name}}</span></p>
+      </div>
     </div>
   </div>
 </template>

@@ -11,10 +11,10 @@
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
+    "date-fns": "^1.29.0",
     "flyio": "^0.5.9",
     "js-base64": "^2.4.6",
     "marked": "^0.4.0",
-    "moment": "^2.22.2",
     "mpvue": "^1.0.0",
     "vuex": "^3.0.0"
   },

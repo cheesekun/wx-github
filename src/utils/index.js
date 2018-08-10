@@ -1,6 +1,25 @@
-import {defaultAvatar, per_page} from '@/utils/config' // eslint-disable-line
+import { defaultAvatar, per_page } from '@/utils/config' // eslint-disable-line
 import colors from './colors'
-import moment from 'moment'
+import distanceInWordsToNow from 'date-fns/distance_in_words_to_now'
+import differenceInCalendarDays from 'date-fns/difference_in_calendar_days'
+import { format } from 'date-fns'
+
+/**
+ * 统一时间处理
+*/
+function formatTime (time) {
+  // 获取与当前时间的天数差
+  let distanceToNowNum = differenceInCalendarDays(new Date(), time)
+
+  if (distanceToNowNum <= 30) {
+    let words = distanceInWordsToNow(time)
+    if (words.indexOf('day') !== -1) {
+      return words + ' ago'
+    }
+    return words
+  }
+  return format(time, 'MMM DD, YYYY')
+}
 
 /**
  * query数据封装
@@ -93,7 +112,7 @@ export function dealUser (data) {
     public_gists: data['public_gists'],
     followers: data.followers,
     following: data.following,
-    created_at: moment(data['created_at']).format('ll')
+    created_at: formatTime(data['created_at'])
   }
 }
 
@@ -116,8 +135,8 @@ export function dealRepo (data) {
       avatar_url: data['owner']['avatar_url']
     },
     description: data['description'],
-    created_at: moment(data['created_at']).format('ll'),
-    pushed_at: moment(data['pushed_at']).format('ll'),
+    created_at: formatTime(data['created_at']),
+    pushed_at: formatTime(data['pushed_at']),
     size: dealSize(data['size']),
     stargazers_count: data['stargazers_count'],
     forks_count: data['forks_count'],
@@ -165,7 +184,7 @@ export function dealCommits (data) {
       commit: {
         message: item.commit.message,
         comment_count: item.commit['comment_count'],
-        date: moment(item.commit.committer.date).format('ll')
+        date: formatTime(item.commit.committer.date)
       }
     }
   })
@@ -258,9 +277,17 @@ function dealEventType (type, payload) {
       break
     case 'MemberEvent':
       obj = {
-        action: firstUpperCase(payload.pages[0].action),
+        action: firstUpperCase(payload.action),
         member: {
           login: payload.member.login
+        }
+      }
+      break
+    case 'ReleaseEvent':
+      obj = {
+        action: firstUpperCase(payload.action),
+        release: {
+          tag_name: payload.release['tag_name']
         }
       }
       break
@@ -284,7 +311,8 @@ export function dealEvents (data) {
         name: item.repo.name
       },
       payload: dealEventType(item.type, item.payload),
-      created_at: moment(item['created_at']).format('ll')
+      // created_at: moment(item['created_at']).format('ll')
+      created_at: formatTime(item['created_at'], 'MMM DD, YYYY')
     }
   })
   return events
