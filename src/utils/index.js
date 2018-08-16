@@ -291,6 +291,12 @@ function dealEventType (type, payload) {
         }
       }
       break
+    case 'DeleteEvent':
+      obj = {
+        ref_type: payload['ref_type'],
+        ref: payload.ref
+      }
+      break
     default:
       obj = {}
   }

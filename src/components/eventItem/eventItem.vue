@@ -33,7 +33,7 @@
         <p>{{event.payload.issue.title}}</p>
       </div>
       <div v-if="event.type === 'IssueCommentEvent'" class="event-desc">
-        <p class="title">{{event.payload.action}} comment on issue {{event.payload.issue.number}} in <span class="strong">{{event.repo.name}}</span></p>
+        <p class="title">{{event.payload.action}} comment on issue {{event.payload.issue.number}} at <span class="strong">{{event.repo.name}}</span></p>
         <p>{{event.payload.comment.body}}</p>
       </div>
       <div v-if="event.type === 'CommitCommentEvent'" class="event-desc">
@@ -41,16 +41,19 @@
         <p>{{event.payload.comment.body}}</p>
       </div>
       <div v-if="event.type === 'GollumEvent'" class="event-desc">
-        <p class="title">{{event.payload.pages.action}} a wiki named {{event.payload.pages['page_name']}} on <span class="strong">{{event.repo.name}}</span></p>
+        <p class="title">{{event.payload.pages.action}} a wiki named {{event.payload.pages['page_name']}} at <span class="strong">{{event.repo.name}}</span></p>
       </div>
       <div v-if="event.type === 'PublicEvent'" class="event-desc">
         <p class="title">Made <span class="strong">{{event.repo.name}}</span> public</p>
       </div>
       <div v-if="event.type === 'MemberEvent'" class="event-desc">
-        <p class="title">{{event.payload.action}} member <span class="strong">{{event.payload.member.login}}</span> in <span class="strong">{{event.repo.name}}</span></p>
+        <p class="title">{{event.payload.action}} member <span class="strong">{{event.payload.member.login}}</span> at <span class="strong">{{event.repo.name}}</span></p>
       </div>
       <div v-if="event.type === 'ReleaseEvent'" class="event-desc">
-        <p class="title">{{event.payload.action}} a release {{event.payload.release['tag_name']}} on <span class="strong">{{event.repo.name}}</span></p>
+        <p class="title">{{event.payload.action}} a release {{event.payload.release['tag_name']}} at <span class="strong">{{event.repo.name}}</span></p>
+      </div>
+      <div v-if="event.type === 'DeleteEvent'" class="event-desc">
+        <p class="title">Delete {{event.payload['ref_type']}} {{event.payload.ref}} at <span class="strong">{{event.repo.name}}</span></p>
       </div>
     </div>
   </div>
