@@ -15,6 +15,11 @@ import { mapState, mapMutations } from 'vuex'
 // import wx from 'wx'
 
 export default {
+  onShareAppMessage () {
+    return {
+      title: `user: ${this.info.login}`
+    }
+  },
   async onLoad () {
     const options = getQuery()
     const user = options.login

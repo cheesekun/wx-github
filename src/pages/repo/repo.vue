@@ -105,6 +105,11 @@ import marked from 'marked'
 import { Base64 } from 'js-base64'
 
 export default {
+  onShareAppMessage () {
+    return {
+      title: `repo: ${this.repo.name}`
+    }
+  },
   async onLoad () {
     wx.getSystemInfo({
       success: (res) => {
