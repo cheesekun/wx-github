@@ -68,6 +68,11 @@ import { dealTrending } from '@/utils'
 import { mapMutations } from 'vuex'
 
 export default {
+  onShareAppMessage () {
+    return {
+      title: 'Trending'
+    }
+  },
   async created () {
     wx.getSystemInfo({
       success: (res) => {
