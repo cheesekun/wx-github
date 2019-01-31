@@ -6,27 +6,29 @@
 
 ## 扫码体验、
 
-![](http://pc9p4qsb2.bkt.clouddn.com/wx-github.jpg)
+![](https://s2.ax1x.com/2019/01/31/k1csP0.jpg)
 
 > UI参考[OpenHub](https://github.com/ThirtyDegreesRay/OpenHub)
+>
+> 后端代码：[KonsonChow/wx-github](https://github.com/KonsonChow/wx-github)
 
 ## 截图预览、
 
 ### gif
 
-![](http://pc9p4qsb2.bkt.clouddn.com/wx-github.gif)
+![](https://s2.ax1x.com/2019/01/31/k1c2MF.md.gif)
 
 ### trending
 
-![](http://pc9p4qsb2.bkt.clouddn.com/trending_gaitubao_com_339x603.jpg)
+![](https://s2.ax1x.com/2019/01/31/k1cyGV.jpg)
 
 ### search
 
-![](http://pc9p4qsb2.bkt.clouddn.com/search_gaitubao_com_339x603.jpg)
+![](https://s2.ax1x.com/2019/01/31/k1ccxU.jpg)
 
 ### USER
 
-![](http://pc9p4qsb2.bkt.clouddn.com/me_gaitubao_com_339x603.jpg)
+![](https://s2.ax1x.com/2019/01/31/k1cD5q.jpg)
 
 
 
